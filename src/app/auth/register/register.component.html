@@ -1,0 +1,17 @@
+<div class="app-container">
+  <div fxLayout="row" fxLayoutAlign="center center" fxFlex>
+    <mat-card fxFlex.xs="90" fxFlex.sm="50" fxFlex.md="40" fxFlex.lg="30" fxFlex.xl="20">
+      <mat-card-content>
+        <form novalidate [formGroup]="form" (ngSubmit)="register()" fxLayout="column" fxLayoutGap="20px">
+          <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions">
+            <df-question [question]="question" [form]="form"></df-question>
+          </div>
+
+          <div fxLayout="row">
+            <button mat-raised-button type="submit" color="primary" fxFlex>Register</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
