@@ -7,8 +7,8 @@ import { MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule } fr
 
 import { DynamicFormQuestionComponent } from './dynamic-form-question/dynamic-form-question.component';
 import { QuestionControlService } from './question-control.service';
-import { TextboxComponent } from './textbox/textbox.component';
-import { PasswordComponent } from './password/password.component';
+import { TextboxQuestionComponent } from './textbox-question/textbox-question.component';
+import { PasswordQuestionComponent } from './password-question/password-question.component';
 
 @NgModule({
   imports: [
@@ -34,7 +34,7 @@ import { PasswordComponent } from './password/password.component';
     MatInputModule,
     ReactiveFormsModule,
   ],
-  declarations: [DynamicFormQuestionComponent, TextboxComponent, PasswordComponent],
+  declarations: [DynamicFormQuestionComponent, TextboxQuestionComponent, PasswordQuestionComponent],
   providers: [QuestionControlService]
 })
 export class SharedModule { }

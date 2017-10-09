@@ -12,40 +12,40 @@ export class RegisterFormQuestionsService {
   constructor(private sorting: SortingService) { }
 
   get() {
-    let questions: QuestionBase<any>[] = [
-      new TextboxQuestion({
-        key: 'email',
-        label: 'Email',
-        type: 'email',
-        required: true,
-        validators: [Validators.required, Validators.email],
-        error: 'Email is required and must be valid.',
-        order: 1
-      }),
-      
-      new PasswordQuestion({
-        key: 'password',
-        label: 'Password',
-        required: true,
-        validators: [Validators.required, Validators.minLength(8)],
-        error: 'Password is required and at least 8 characters.',
-        order: 2
-      }),
+    let questions = {
+      email: [
+        new TextboxQuestion({
+          key: 'email',
+          label: 'Email',
+          type: 'email',
+          required: true,
+          validators: [Validators.required, Validators.email],
+          error: 'Email is required and must be valid.',
+        }),
+      ],
+      password: [ 
+        new PasswordQuestion({
+          key: 'password',
+          label: 'Password',
+          required: true,
+          validators: [Validators.required, Validators.minLength(8)],
+          error: 'Password is required and at least 8 characters.',
+          order: 1
+        }),
+  
+        new PasswordQuestion({
+          key: 'password_confirmation',
+          label: 'Confirm Password',
+          required: true,
+          validators: [Validators.required, Validators.minLength(8)],
+          error: 'Confirm password is required and at least 8 characters.',
+          order: 2
+        }),
+      ]
+    } 
 
-      new PasswordQuestion({
-        key: 'password_confirmation',
-        label: 'Confirm Password',
-        required: true,
-        validators: [Validators.required, Validators.minLength(8)],
-        error: 'Confirm password is required and at least 8 characters.',
-        order: 2
-      }),
-    ]
+    questions.password = this.sorting.sortByValue(questions.password, 'order');
 
-    return this.sorting.sortByValue(questions, 'order');
-  }
-
-  toggleVisibilityIcon() {
-
+    return questions;
   }
 }

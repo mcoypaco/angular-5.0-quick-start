@@ -1,8 +1,8 @@
 <div [formGroup]="form">
   <div [ngSwitch]="question.controlType">
 
-    <app-textbox *ngSwitchCase="'text'" fxFlex [question]="question" [form]="form"></app-textbox>
-    <app-password *ngSwitchCase="'password'" fxFlex [question]="question" [form]="form"></app-password>
+    <app-textbox-question *ngSwitchCase="'text'" fxFlex [question]="question" [form]="form"></app-textbox-question>
+    <app-password-question *ngSwitchCase="'password'" fxFlex [question]="question" [form]="form"></app-password-question>
     
   </div>
 </div>

@@ -4,14 +4,14 @@ import { FormGroup } from '@angular/forms';
 import { QuestionBase } from '../question-base';
 
 @Component({
-  selector: 'app-password',
-  templateUrl: './password.component.html',
-  styleUrls: ['./password.component.scss']
+  selector: 'app-password-question',
+  templateUrl: './password-question.component.html',
+  styleUrls: ['./password-question.component.scss']
 })
-export class PasswordComponent implements OnInit {
+export class PasswordQuestionComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() question: QuestionBase<string>;
-  hide: boolean = true;
+  hidden: boolean = true;
 
   constructor() { }
 

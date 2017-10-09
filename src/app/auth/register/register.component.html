@@ -1,16 +1,33 @@
 <div class="app-container">
   <div fxLayout="row" fxLayoutAlign="center center" fxFlex>
     <mat-card fxFlex.xs="90" fxFlex.sm="50" fxFlex.md="40" fxFlex.lg="30" fxFlex.xl="20">
+      <mat-card-title>Register</mat-card-title>
       <mat-card-content>
-        <form novalidate [formGroup]="form" (ngSubmit)="register()" fxLayout="column" fxLayoutGap="20px">
-          <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions">
-            <df-question [question]="question" [form]="form"></df-question>
-          </div>
-
-          <div fxLayout="row">
-            <button mat-raised-button type="submit" color="primary" fxFlex>Register</button>
-          </div>
-        </form>
+        <mat-vertical-stepper linear>
+          <mat-step [stepControl]="emailForm" label="{{email || 'Email'}}">
+            <form novalidate [formGroup]="emailForm" fxLayout="column" fxLayoutGap="20px">
+              <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions.email">
+                <df-question [question]="question" [form]="emailForm"></df-question>
+              </div>
+              
+              <div fxLayout="row" fxLayoutAlign="end center" *ngIf="emailAvailable && emailForm.valid">
+                <button mat-button matStepperNext type="button" color="primary" (click)="setEmail()">Next</button>
+              </div>
+              <mat-spinner *ngIf="busy"></mat-spinner>
+            </form>
+          </mat-step>
+          <mat-step [stepControl]="passwordForm" label="Set your password" *ngIf="emailAvailable">
+            <form novalidate [formGroup]="passwordForm" (ngSubmit)="register()" fxLayout="column" fxLayoutGap="20px">
+              <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions.password">
+                <df-question [question]="question" [form]="passwordForm"></df-question>
+              </div>
+    
+              <div fxLayout="row" fxLayoutAlign="end center">
+                <button mat-raised-button type="submit" color="primary">Register</button>
+              </div>
+            </form>
+          </mat-step>
+        </mat-vertical-stepper>
       </mat-card-content>
     </mat-card>
   </div>
