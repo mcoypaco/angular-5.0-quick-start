@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 
+import { AuthService } from '../auth.service';
+import { AccessTokenService } from '../access-token.service';
 import { LoginFormQuestionsService } from './login-form-questions.service';
 import { QuestionBase } from '../../shared/question-base';
 import { QuestionControlService } from '../../shared/question-control.service';
@@ -16,8 +19,11 @@ export class LoginComponent implements OnInit {
   questions: QuestionBase<any>[];
   
   constructor(
+    private auth: AuthService,
+    private accessToken: AccessTokenService,
     private questionControl: QuestionControlService, 
-    private questionSource: LoginFormQuestionsService
+    private questionSource: LoginFormQuestionsService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -25,7 +31,17 @@ export class LoginComponent implements OnInit {
     this.form = this.questionControl.toFormGroup(this.questions);
   }
 
-  login(){
-    console.log(this.form.value);
+  /**
+   * Attempt login with user credentials
+   */
+  login() {
+    if(this.form.valid) {
+      this.auth.login(this.form.get('email').value, this.form.get('password').value)
+        .subscribe(
+          apiAccess => this.accessToken.store(apiAccess),
+          error => console.log(error),
+          () => this.router.navigate(['/'])
+        );
+    }
   }
 }

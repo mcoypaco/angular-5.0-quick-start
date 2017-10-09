@@ -9,6 +9,7 @@ import { AuthGuard } from './auth.guard';
 import { RedirectIfLoggedInGuard } from './redirect-if-logged-in.guard';
 import { AuthService } from './auth.service';
 import { SharedModule } from '../shared/shared.module';
+import { AccessTokenService } from './access-token.service';
 
 @NgModule({
   imports: [
@@ -17,6 +18,6 @@ import { SharedModule } from '../shared/shared.module';
     SharedModule,
   ],
   declarations: [LoginComponent, RegisterComponent, PasswordResetComponent],
-  providers: [AuthGuard, RedirectIfLoggedInGuard, AuthService]
+  providers: [AuthGuard, RedirectIfLoggedInGuard, AuthService, AccessTokenService]
 })
 export class AuthModule { }
