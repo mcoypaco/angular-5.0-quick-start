@@ -3,18 +3,22 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { AccessTokenService } from '../auth/access-token.service';
+import { ApiAccess } from '../interfaces/api-access';
 import { environment } from '../../environments/environment';
 
 @Injectable()
 export class ApiService {
+  apiAccess: ApiAccess;
 
-  constructor(private accessToken: AccessTokenService, private http: HttpClient) { }
+  constructor(private accessToken: AccessTokenService, private http: HttpClient) { 
+    this.apiAccess = this.accessToken.get('apiAccess');
+  }
 
   /**
    * Set an authorization HttpHeader for Laravel API
    */
   headers(): HttpHeaders {
-    return new HttpHeaders().set('Authorization', `${this.accessToken.get().token_type} ${this.accessToken.get().access_token}`);
+    return new HttpHeaders().set('Authorization', `${this.apiAccess.token_type} ${this.apiAccess.access_token}`);
   }
   
   /**

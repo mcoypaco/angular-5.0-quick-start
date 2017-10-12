@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
     if(this.form.valid) {
       this.auth.login(this.form.get('email').value, this.form.get('password').value)
         .subscribe(
-          apiAccess => this.accessToken.store(apiAccess),
+          apiAccess => this.accessToken.store('apiAccess', apiAccess),
           error => console.log(error),
           () => this.router.navigate(['/'])
         );

@@ -5,6 +5,8 @@ export class QuestionBase<T> {
     required: boolean;
     validators: any[];
     error: string;
+    customError: string;
+    showCustomError: boolean;
     order: number;
     controlType: string;
 
@@ -15,6 +17,7 @@ export class QuestionBase<T> {
         required?: boolean,
         validators?: any[],
         error?: string,
+        customError?: string,
         order?: number,
       } = {}) {
       this.value = options.value;
@@ -23,6 +26,8 @@ export class QuestionBase<T> {
       this.required = options.required ? true : false;
       this.validators = options.validators;
       this.error = options.error;
+      this.customError = options.customError;
+      this.showCustomError = false;
       this.order = options.order === undefined ? 1 : options.order;
     }
 }

@@ -8,10 +8,11 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/empty';
 
-import { ApiService } from '../../core/api.service';
+import { AuthService } from '../auth.service';
 import { RegisterFormQuestionsService } from './register-form-questions.service';
 import { QuestionBase } from '../../shared/question-base';
 import { QuestionControlService } from '../../shared/question-control.service';
+import { UserDataService } from '../../core/resources/user-data.service';
 
 @Component({
   selector: 'app-register',
@@ -22,16 +23,18 @@ import { QuestionControlService } from '../../shared/question-control.service';
 export class RegisterComponent implements OnInit, OnDestroy {
   busy: boolean;
   email: string;
-  emailAvailable: boolean;
+  hasDuplicate: boolean;
   emailForm: FormGroup;
   emailSubscription: Subscription;
   passwordForm: FormGroup;
   questions: any;
+  verified: boolean;
 
   constructor(
-    private api: ApiService,
+    private auth: AuthService,
     private questionControl: QuestionControlService,
-    private questionSource: RegisterFormQuestionsService
+    private questionSource: RegisterFormQuestionsService,
+    private userData: UserDataService,
   ) { }
 
   ngOnInit() {
@@ -42,26 +45,30 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.emailSubscription = this.emailForm.get('email').valueChanges
       .debounceTime(400)
       .distinctUntilChanged()
-      .switchMap(email => {
-        if(this.emailForm.valid) {
-          return this.checkEmail().catch(error => {
-            console.log(error);
-            return Observable.empty();
-          })
-        }
-      })
-      .subscribe(resp => this.emailAvailable = resp ? true : false);
+      .subscribe(email => {
+        this.verified = false;
+        this.hasDuplicate = false;
+      });
   }
 
   ngOnDestroy() {
     this.emailSubscription.unsubscribe();
   }
 
-  checkEmail() {
-    return this.api.post('user/check-duplicate');
-  }
-
   setEmail() {
     this.email = this.emailForm.get('email').value;
+  }
+
+  verify() {
+    let payload = { email: this.emailForm.get('email').value }
+
+    this.auth.validateEmail(payload).subscribe(
+      (hasDuplicate: boolean) => {
+        this.hasDuplicate = hasDuplicate;
+        this.questions.email.find(form => form.key === 'email').showCustomError = hasDuplicate;
+      },
+      error => console.log(error), // Todo: exception handler
+      () => this.verified = true 
+    );
   }
 }

@@ -10,13 +10,14 @@
                 <df-question [question]="question" [form]="emailForm"></df-question>
               </div>
               
-              <div fxLayout="row" fxLayoutAlign="end center" *ngIf="emailAvailable && emailForm.valid">
-                <button mat-button matStepperNext type="button" color="primary" (click)="setEmail()">Next</button>
+              <div fxLayout="row" fxLayoutAlign="end center">
+                <button mat-button matStepperNext type="submit" color="primary" (click)="verify()">Verify</button>
+                <button mat-button matStepperNext *ngIf="verified && !hasDuplicate" type="submit" color="primary" (click)="setEmail()">Next</button>
               </div>
               <mat-spinner *ngIf="busy"></mat-spinner>
             </form>
           </mat-step>
-          <mat-step [stepControl]="passwordForm" label="Set your password" *ngIf="emailAvailable">
+          <mat-step [stepControl]="passwordForm" label="Set your password" *ngIf="verified && !hasDuplicate">
             <form novalidate [formGroup]="passwordForm" (ngSubmit)="register()" fxLayout="column" fxLayoutGap="20px">
               <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions.password">
                 <df-question [question]="question" [form]="passwordForm"></df-question>

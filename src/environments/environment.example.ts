@@ -1,16 +1,14 @@
 export const environment = {
-  production: true,
-  laravel: {
+    production: true,
+    laravel: {
       url: 'http://laravel-quickstart',
       passport: {
-          passwordGrant: {
-              client_id: null,
-              client_secret: null,
-          }
+        client_id: null,
+        client_secret: null,
       }
-  },
-  pusher: {
+    },
+    pusher: {
       key: null,
       cluster: null
-  }
-};
+    },
+  };

@@ -5,6 +5,7 @@ import { SharedModule } from '../shared/shared.module';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ApiService } from './api.service';
 import { SortingService } from './sorting.service';
+import { UserDataService } from './resources/user-data.service';
 
 @NgModule({
   imports: [
@@ -12,6 +13,6 @@ import { SortingService } from './sorting.service';
     SharedModule
   ],
   declarations: [PageNotFoundComponent],
-  providers: [ApiService, SortingService]
+  providers: [ApiService, SortingService, UserDataService]
 })
 export class CoreModule { }

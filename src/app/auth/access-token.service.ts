@@ -10,22 +10,22 @@ export class AccessTokenService {
   /**
    * Fetches ApiAccess from local storage
    */
-  get(): ApiAccess {
-    return JSON.parse(localStorage.getItem('apiAccess'));
+  get(key: string): ApiAccess {
+    return JSON.parse(localStorage.getItem(key));
   }
 
   /**
    * Stores ApiAccess to local storage
    * @param apiAccess 
    */
-  store(apiAccess: ApiAccess) {
-    localStorage.setItem('apiAccess', JSON.stringify(apiAccess));
+  store(key:string, apiAccess: ApiAccess) {
+    localStorage.setItem(key, JSON.stringify(apiAccess));
   }
 
   /**
    * Remove ApiAccess from local storage
    */
-  delete() {
-    localStorage.removeItem('apiAccess');
+  delete(key:string) {
+    localStorage.removeItem(key);
   }
 }

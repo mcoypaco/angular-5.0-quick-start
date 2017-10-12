@@ -21,6 +21,7 @@ export class RegisterFormQuestionsService {
           required: true,
           validators: [Validators.required, Validators.email],
           error: 'Email is required and must be valid.',
+          customError: 'Email is already in use.'
         }),
       ],
       password: [ 
