@@ -60,6 +60,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   verify() {
+    this.busy = true;
+    
     let payload = { email: this.emailForm.get('email').value }
 
     this.auth.validateEmail(payload).subscribe(
