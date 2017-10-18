@@ -13,6 +13,15 @@ export class RegisterFormQuestionsService {
 
   get() {
     let questions = {
+      name: [
+        new TextboxQuestion({
+          key: 'name',
+          label: 'Name',
+          required: true,
+          validators: [Validators.required],
+          error: 'Name is required.',
+        }),
+      ],
       email: [
         new TextboxQuestion({
           key: 'email',
@@ -31,6 +40,7 @@ export class RegisterFormQuestionsService {
           required: true,
           validators: [Validators.required, Validators.minLength(8)],
           error: 'Password is required and at least 8 characters.',
+          customError: `Passwords doesn't match.`,
           order: 1
         }),
   
@@ -40,6 +50,7 @@ export class RegisterFormQuestionsService {
           required: true,
           validators: [Validators.required, Validators.minLength(8)],
           error: 'Confirm password is required and at least 8 characters.',
+          customError: `Passwords doesn't match.`,
           order: 2
         }),
       ]

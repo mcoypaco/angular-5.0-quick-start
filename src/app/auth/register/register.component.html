@@ -4,15 +4,26 @@
       <mat-card-title>Register</mat-card-title>
       <mat-card-content>
         <mat-vertical-stepper linear>
+          <mat-step [stepControl]="nameForm" label="{{name || 'Name'}}">
+            <form novalidate [formGroup]="nameForm" (ngSubmit)="setName()" fxLayout="column" fxLayoutGap="20px">
+              <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions.name">
+                <df-question [question]="question" [form]="nameForm"></df-question>
+              </div>
+              
+              <div fxLayout="row" fxLayoutAlign="end center">
+                <button mat-button matStepperNext type="submit" color="primary">Next</button>
+              </div>
+              <mat-spinner *ngIf="busy"></mat-spinner>
+            </form>
+          </mat-step>
           <mat-step [stepControl]="emailForm" label="{{email || 'Email'}}">
-            <form novalidate [formGroup]="emailForm" fxLayout="column" fxLayoutGap="20px">
+            <form novalidate [formGroup]="emailForm" (ngSubmit)="setEmail()" fxLayout="column" fxLayoutGap="20px">
               <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions.email">
                 <df-question [question]="question" [form]="emailForm"></df-question>
               </div>
               
               <div fxLayout="row" fxLayoutAlign="end center">
-                <button mat-button matStepperNext type="submit" color="primary" (click)="verify()">Verify</button>
-                <button mat-button matStepperNext *ngIf="verified && !hasDuplicate" type="submit" color="primary" (click)="setEmail()">Next</button>
+                <button mat-button matStepperNext *ngIf="verified && !hasDuplicate" type="submit" color="primary">Next</button>
               </div>
               <mat-spinner *ngIf="busy"></mat-spinner>
             </form>
@@ -22,10 +33,11 @@
               <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions.password">
                 <df-question [question]="question" [form]="passwordForm"></df-question>
               </div>
-    
+              
               <div fxLayout="row" fxLayoutAlign="end center">
                 <button mat-raised-button type="submit" color="primary">Register</button>
               </div>
+              <mat-spinner *ngIf="busy"></mat-spinner>
             </form>
           </mat-step>
         </mat-vertical-stepper>

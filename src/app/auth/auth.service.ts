@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { ApiAccess } from '../interfaces/api-access';
 import { AccessTokenService } from './access-token.service';
 import { environment } from '../../environments/environment';
+import { User } from '../models/user';
+
 const { client_id, client_secret } = environment.laravel.passport;
 
 @Injectable()
@@ -62,6 +64,13 @@ export class AuthService {
     if(apiAccess) return true;
 
     return false;
+  }
+
+  /**
+   * Register the user credentials.
+   */
+  register(payload: { name: string, email: string, password: string, password_confirmation: string }) {
+    return this.http.post<User>(`${environment.laravel.url}/api/user`, payload, { headers: this.clientHeaders() });
   }
 
   /**
