@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+  <p class="mat-body-1">{{data.message}}</p>
+</mat-dialog-content>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+  <button mat-button (click)="close(false)">{{data.cancel}}</button>
+  <button mat-button (click)="close(true)">{{data.action}}</button>
+</mat-dialog-actions>
