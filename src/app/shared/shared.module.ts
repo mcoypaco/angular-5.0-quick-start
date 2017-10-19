@@ -30,6 +30,7 @@ import { InputErrorComponent } from './input-error/input-error.component';
     FlexLayoutModule,
     FormsModule,
     HttpClientModule,
+    InputErrorComponent,
     MatButtonModule, 
     MatFormFieldModule, 
     MatIconModule,

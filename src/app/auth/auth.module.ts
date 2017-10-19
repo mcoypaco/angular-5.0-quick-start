@@ -10,6 +10,7 @@ import { RedirectIfLoggedInGuard } from './redirect-if-logged-in.guard';
 import { AuthService } from './auth.service';
 import { SharedModule } from '../shared/shared.module';
 import { AccessTokenService } from './access-token.service';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 @NgModule({
   imports: [
@@ -19,7 +20,7 @@ import { AccessTokenService } from './access-token.service';
     MatStepperModule,
     SharedModule,
   ],
-  declarations: [LoginComponent, RegisterComponent, PasswordResetComponent],
+  declarations: [LoginComponent, RegisterComponent, PasswordResetComponent, ForgotPasswordComponent],
   providers: [AuthGuard, RedirectIfLoggedInGuard, AuthService, AccessTokenService]
 })
 export class AuthModule { }

@@ -13,6 +13,7 @@ import 'rxjs/add/observable/empty';
 import { ApiAccess } from '../../interfaces/api-access';
 import { AccessTokenService } from '../access-token.service';
 import { AuthService } from '../auth.service';
+import { ExceptionService } from '../../core/exception.service';
 import { RegisterFormQuestionsService } from './register-form-questions.service';
 import { QuestionBase } from '../../shared/question-base';
 import { QuestionControlService } from '../../shared/question-control.service';
@@ -42,6 +43,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   constructor(
     private accessToken: AccessTokenService,
     private auth: AuthService,
+    private exception: ExceptionService,
     private questionControl: QuestionControlService,
     private questionSource: RegisterFormQuestionsService,
     private router: Router,
@@ -62,7 +64,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         if(this.emailForm.valid)
         {
           return this.verify(email).catch(error => {
-            console.log(error) // Todo: exception handler
+            this.busy = false;
+            this.exception.handle(error);
             return Observable.empty();
           });
         }
@@ -136,13 +139,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.auth.register(payload)
         .catch(error => {
           this.busy = false;
-          console.log(error); // Todo: Exception handler
+          this.exception.handle(error);
           return Observable.empty();
         })
         .switchMap(user => {
           return this.auth.login(payload.email, payload.password).catch(error => {
             this.busy = false;
-            console.log(error); // Todo: Exception handler
+            this.exception.handle(error);
             return Observable.empty();
           });
         })

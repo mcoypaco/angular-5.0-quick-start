@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { LoginComponent } from './login/login.component';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { RegisterComponent } from './register/register.component';
@@ -13,7 +14,12 @@ const routes: Routes = [
     canActivate: [RedirectIfLoggedInGuard],
   },
   {
-    path: 'password-reset',
+    path: 'password/reset',
+    component: ForgotPasswordComponent,
+    canActivate: [RedirectIfLoggedInGuard],
+  },
+  {
+    path: 'password/reset/:token',
     component: PasswordResetComponent,
     canActivate: [RedirectIfLoggedInGuard],
   },
