@@ -3,6 +3,7 @@
     <mat-card fxFlex.xs="90" fxFlex.sm="50" fxFlex.md="40" fxFlex.lg="30" fxFlex.xl="20">
       <mat-card-content>
         <form novalidate [formGroup]="form" (ngSubmit)="login()" fxLayout="column" fxLayoutGap="20px">
+          <p class="mat-error" *ngIf="invalidCredentials">Invalid credentials</p>
           <div fxLayout="column" fxLayoutGap="20px" *ngFor="let question of questions">
             <df-question [question]="question" [form]="form"></df-question>
           </div>
@@ -11,9 +12,14 @@
             <a routerLink="/password/reset" mat-button color="primary">Having trouble logging in?</a>
           </div>
 
-          <div fxLayout="row">
-            <button mat-raised-button type="submit" color="primary" fxFlex>Login</button>
-          </div>
+          <ng-container *ngIf="busy; else elseTemplate">
+            <mat-spinner></mat-spinner>
+          </ng-container>
+          <ng-template #elseTemplate>
+            <div fxLayout="row">
+              <button mat-raised-button type="submit" color="primary" fxFlex>Login</button>
+            </div>
+          </ng-template>
         </form>
       </mat-card-content>
     </mat-card>
