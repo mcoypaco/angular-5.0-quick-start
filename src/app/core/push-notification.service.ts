@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class PushNotificationService {
-  duration: number = 2000;
+  protected duration: number = 2000;
 
   constructor(private snackBar: MatSnackBar) { }
 
@@ -14,7 +14,7 @@ export class PushNotificationService {
    * @param message 
    * @param action 
    */
-  simple(message: string, action: string = 'Okay') { 
-    return this.snackBar.open(message, action, { duration: this.duration });
+  simple(message: string, action: string = 'Okay', duration: number = this.duration) { 
+    return this.snackBar.open(message, action, { duration });
   }
 }
