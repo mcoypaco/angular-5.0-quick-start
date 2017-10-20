@@ -8,6 +8,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/finally';
 import 'rxjs/add/observable/empty';
 
 import { ApiAccess } from '../../interfaces/api-access';
@@ -18,6 +19,7 @@ import { RegisterFormQuestionsService } from './register-form-questions.service'
 import { QuestionBase } from '../../shared/question-base';
 import { QuestionControlService } from '../../shared/question-control.service';
 import { UserDataService } from '../../core/resources/user-data.service';
+import { ConfirmedPasswordFormService } from '../confirmed-password-form/confirmed-password-form.service';
 
 @Component({
   selector: 'app-register',
@@ -26,23 +28,25 @@ import { UserDataService } from '../../core/resources/user-data.service';
   providers: [RegisterFormQuestionsService]
 })
 export class RegisterComponent implements OnInit, OnDestroy {
+  questions: any;
+
   busy: boolean;
-  confirmPasswordSubscription: Subscription;
-  email: string;
   hasDuplicate: boolean;
-  emailForm: FormGroup;
-  emailSubscription: Subscription;
+  verified: boolean;
+
+  email: string;
   name: string;
+
+  emailForm: FormGroup;
   nameForm: FormGroup;
   passwordForm: FormGroup;
-  passwordsMatch: boolean;
-  passwordSubscription: Subscription;
-  questions: any;
-  verified: boolean;
+
+  emailSubscription: Subscription;
 
   constructor(
     private accessToken: AccessTokenService,
     private auth: AuthService,
+    private confirmedPasswordForm: ConfirmedPasswordFormService,
     private exception: ExceptionService,
     private questionControl: QuestionControlService,
     private questionSource: RegisterFormQuestionsService,
@@ -53,8 +57,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.questions = this.questionSource.get();
     this.emailForm = this.questionControl.toFormGroup(this.questions.email);
-    this.passwordForm = this.questionControl.toFormGroup(this.questions.password);
     this.nameForm = this.questionControl.toFormGroup(this.questions.name);
+
+    this.confirmedPasswordForm.buttonLabel = 'Register';
 
     this.emailSubscription = this.emailForm.get('email').valueChanges
       .do(email => this.verified = false)
@@ -63,46 +68,30 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .switchMap(email => {
         if(this.emailForm.valid)
         {
-          return this.verify(email).catch(error => {
-            this.busy = false;
-            this.exception.handle(error);
-            return Observable.empty();
-          });
+          return this.verify(email)
+            .finally(() => this.busy = false)
+            .catch(error => {
+              this.exception.handle(error);
+              return Observable.empty();
+            });
         }
 
         return Observable.empty();
       })
       .subscribe((hasDuplicate: boolean) => {
-        this.busy = false;
         this.hasDuplicate = hasDuplicate;
         this.questions.email.find(form => form.key === 'email').showCustomError = hasDuplicate;
         this.verified = true;
       });
 
-    this.passwordSubscription = this.passwordForm.get('password').valueChanges
-      .subscribe(password => {
-        this.passwordsMatch = password === this.passwordForm.get('password_confirmation').value;
-        this.checkPasswords();
-      }); 
-
-    this.confirmPasswordSubscription = this.passwordForm.get('password_confirmation').valueChanges
-      .subscribe(confirmPassword => {
-        this.passwordsMatch = confirmPassword === this.passwordForm.get('password').value;
-        this.checkPasswords();
-      });
+    this.confirmedPasswordForm.passwordForm$.subscribe(form => {
+      this.passwordForm = form; 
+      this.register();
+    });
   }
 
   ngOnDestroy() {
     this.emailSubscription.unsubscribe();
-  }
-
-  /**
-   * Check if password and confirmation password error message should be displayed.
-   * 
-   */
-  checkPasswords() {
-    this.questions.password.find(form => form.key === 'password').showCustomError = !this.passwordsMatch && this.passwordForm.get('password').valid && this.passwordForm.get('password_confirmation').touched;
-    this.questions.password.find(form => form.key === 'password_confirmation').showCustomError = !this.passwordsMatch && this.passwordForm.get('password_confirmation').valid && this.passwordForm.get('password').touched;
   }
 
   /**
@@ -125,10 +114,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
    * 
    */
   register() {
-    if(!this.busy && this.emailForm.valid && this.passwordForm.valid && !this.hasDuplicate && this.passwordsMatch)
+    if(this.emailForm.valid && !this.hasDuplicate)
     {
-      this.busy = true;
-
       const payload = {
         name: this.nameForm.get('name').value,
         email: this.emailForm.get('email').value,
@@ -138,22 +125,21 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
       this.auth.register(payload)
         .catch(error => {
-          this.busy = false;
+          this.confirmedPasswordForm.busy = false;
           this.exception.handle(error);
           return Observable.empty();
         })
         .switchMap(user => {
-          return this.auth.login(payload.email, payload.password).catch(error => {
-            this.busy = false;
-            this.exception.handle(error);
-            return Observable.empty();
-          });
+          return this.auth.login(payload.email, payload.password)
+            .finally(() => this.confirmedPasswordForm.busy = false)
+            .catch(error => {
+              this.exception.handle(error);
+              return Observable.empty();
+            });
         })
         .subscribe((apiAccess: ApiAccess) => {
-          this.busy = false;
-          
           if(apiAccess) {
-            this.accessToken.store('apiAccess', apiAccess),
+            this.accessToken.store('apiAccess', apiAccess);
             this.router.navigate(['/']);
           };
         });

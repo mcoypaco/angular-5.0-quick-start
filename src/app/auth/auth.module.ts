@@ -11,6 +11,8 @@ import { AuthService } from './auth.service';
 import { SharedModule } from '../shared/shared.module';
 import { AccessTokenService } from './access-token.service';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ConfirmedPasswordFormComponent } from './confirmed-password-form/confirmed-password-form.component';
+import { ConfirmedPasswordFormService } from './confirmed-password-form/confirmed-password-form.service';
 
 @NgModule({
   imports: [
@@ -20,7 +22,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
     MatStepperModule,
     SharedModule,
   ],
-  declarations: [LoginComponent, RegisterComponent, PasswordResetComponent, ForgotPasswordComponent],
-  providers: [AuthGuard, RedirectIfLoggedInGuard, AuthService, AccessTokenService]
+  declarations: [LoginComponent, RegisterComponent, PasswordResetComponent, ForgotPasswordComponent, ConfirmedPasswordFormComponent],
+  providers: [AuthGuard, RedirectIfLoggedInGuard, AuthService, AccessTokenService, ConfirmedPasswordFormService]
 })
 export class AuthModule { }
