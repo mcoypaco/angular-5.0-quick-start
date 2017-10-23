@@ -11,6 +11,7 @@ import { ExceptionService } from './exception.service';
 import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
 import { AlertDialogService } from './alert-dialog.service';
 import { PushNotificationService } from './push-notification.service';
+import { ForbiddenPageComponent } from './forbidden-page/forbidden-page.component';
 
 @NgModule({
   imports: [
@@ -19,7 +20,7 @@ import { PushNotificationService } from './push-notification.service';
     MatSnackBarModule,
     SharedModule
   ],
-  declarations: [PageNotFoundComponent, AlertDialogComponent],
+  declarations: [PageNotFoundComponent, AlertDialogComponent, ForbiddenPageComponent],
   providers: [ApiService, SortingService, UserDataService, ExceptionService, AlertDialogService, PushNotificationService],
   entryComponents: [AlertDialogComponent]
 })

@@ -1,15 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { AuthGuard } from './auth/auth.guard';
 import { PageNotFoundComponent } from './core/page-not-found/page-not-found.component';
+import { ForbiddenPageComponent } from './core/forbidden-page/forbidden-page.component';
 
 const routes: Routes = [
     {
         path: '',
         loadChildren: 'app/layout/layout.module#LayoutModule',
-        canLoad: [AuthGuard],
-        canActivate: [AuthGuard],
     },
     {
         path: '**',
