@@ -74,6 +74,17 @@ export class ExceptionService {
   }
 
   /**
+   * Sends error report to admin.
+   * 
+   */
+  protected sendReport(): void {
+    this.http.post(`${environment.laravel.url}/api/error-report`, this.error, { headers: this.auth.clientHeaders() }).subscribe(
+      resp => this.pushNotification.simple('Report sent.'),
+      error => this.pushNotification.simple('Error encountered sending report.')
+    );
+  }
+
+  /**
    * Displays a default error dialog.
    * 
    */
@@ -96,17 +107,6 @@ export class ExceptionService {
   }
 
   /**
-   * Sends error report to admin.
-   * 
-   */
-  protected sendReport(): void {
-    this.http.post(`${environment.laravel.url}/api/report-error`, this.error, { headers: this.auth.clientHeaders() }).subscribe(
-      resp => this.pushNotification.simple('Report sent.'),
-      error => this.pushNotification.simple('Error encountered sending report.')
-    );
-  }
-
-  /**
    * Displays an unauthenticated error dialog, then redirects to login page on close. 
    * 
    */
@@ -122,7 +122,7 @@ export class ExceptionService {
    * Displays an unauthorized error dialog.
    * 
    */
-  protected unauthorized() {
+  protected unauthorized(): void {
     const message = 'This action is unauthorized.';
 
     this.openDialog(message);
@@ -131,7 +131,7 @@ export class ExceptionService {
   /**
    * Displays an unprocessable error dialog.
    */
-  protected unprocessable() {
+  protected unprocessable(): void {
     const message = 'Please check the form for errors.'
 
     this.openDialog(message);
