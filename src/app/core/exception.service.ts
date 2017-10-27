@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
+import 'rxjs/add/operator/switchMap';
 
 import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
 import { AlertDialogService } from './alert-dialog.service';
 import { AuthService } from '../auth/auth.service';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogService } from './confirmation-dialog.service';
 import { PushNotificationService } from './push-notification.service';
 import { environment } from '../../environments/environment';
 
@@ -16,6 +19,7 @@ export class ExceptionService {
   constructor(
     private alertDialog: AlertDialogService,
     private auth: AuthService,
+    private confirmationDialog: ConfirmationDialogService,
     private http: HttpClient,
     private pushNotification: PushNotificationService,
     private router: Router,
@@ -58,18 +62,33 @@ export class ExceptionService {
   }
 
   /**
-   * Opens the dialog containing the error message and action.
+   * Opens an alery dialog containing the error message and action.
    * 
    * @param message 
    * @param action 
    * @param cancel 
    */
-  protected openDialog(message: string, action: string = 'Got it!', cancel?: string): MatDialogRef<AlertDialogComponent> {
+  protected openAlertDialog(message: string, action: string = 'Got it!'): MatDialogRef<AlertDialogComponent> {
     return this.alertDialog.open({
       title: this.error.statusText,
       message,
       action,
-      cancel
+    });
+  }
+
+  /**
+   * Opens a confirmation dialog containing the error message and action.
+   * 
+   * @param message 
+   * @param action 
+   * @param cancel 
+   */
+  protected openConfirmationDialog(message: string, action: string = 'Yes', cancel: string = 'No'): MatDialogRef<ConfirmationDialogComponent> {
+    return this.confirmationDialog.open({
+      title: this.error.statusText,
+      message,
+      action,
+      cancel,
     });
   }
 
@@ -89,7 +108,7 @@ export class ExceptionService {
    * 
    */
   protected defaultError(): void {
-    this.openDialog(this.error.message);
+    this.openAlertDialog(this.error.message);
   }
 
   /**
@@ -101,7 +120,7 @@ export class ExceptionService {
     const action = 'Send Report';
     const cancel = 'Cancel';
 
-    this.openDialog(message, action, cancel).afterClosed().subscribe(resp => {
+    this.openConfirmationDialog(message, action, cancel).afterClosed().subscribe(resp => {
       if(resp) this.sendReport();
     });
   }
@@ -113,9 +132,13 @@ export class ExceptionService {
   protected unauthenticated(): void {
     const message = 'Please login to continue.';
 
-    this.openDialog(message).afterClosed().subscribe(resp => {
-      this.auth.logout().then(() => this.router.navigate(['/login']));
-    });
+    this.openAlertDialog(message)
+      .afterClosed()
+      .switchMap(resp => this.auth.logout())
+      .subscribe(
+        resp => this.router.navigate(['/login']),
+        error => this.handle(error)
+      );
   }
 
   /**
@@ -125,7 +148,7 @@ export class ExceptionService {
   protected unauthorized(): void {
     const message = 'This action is unauthorized.';
 
-    this.openDialog(message);
+    this.openAlertDialog(message);
   }
 
   /**
@@ -134,6 +157,6 @@ export class ExceptionService {
   protected unprocessable(): void {
     const message = 'Please check the form for errors.'
 
-    this.openDialog(message);
+    this.openAlertDialog(message);
   }
 }

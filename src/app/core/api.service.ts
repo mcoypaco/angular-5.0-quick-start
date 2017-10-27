@@ -18,7 +18,7 @@ export class ApiService {
    * Set an authorization HttpHeader for Laravel API
    */
   headers(): HttpHeaders {
-    return new HttpHeaders().set('Authorization', `${this.apiAccess.token_type} ${this.apiAccess.access_token}`);
+    return new HttpHeaders().set('Authorization', `${this.accessToken.get('apiAccess').token_type} ${this.accessToken.get('apiAccess').access_token}`);
   }
   
   /**

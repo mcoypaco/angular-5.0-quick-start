@@ -8,7 +8,7 @@ export class AlertDialogService {
 
   constructor(private dialog: MatDialog) { }
 
-  open(data: { title: string, message: string, action: string, cancel: string }): MatDialogRef<AlertDialogComponent> {
-    return this.dialog.open(AlertDialogComponent, { data })
+  open(data: { title: string, message: string, action: string }): MatDialogRef<AlertDialogComponent> {
+    return this.dialog.open(AlertDialogComponent, { data, disableClose: true })
   }
 }
