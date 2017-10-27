@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { CanDeactivateGuard } from '../core/can-deactivate.guard';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { LoginComponent } from './login/login.component';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
@@ -27,6 +28,7 @@ const routes: Routes = [
     path: 'register',
     component: RegisterComponent,
     canActivate: [RedirectIfLoggedInGuard],
+    canDeactivate: [CanDeactivateGuard]
   },
 ];
 

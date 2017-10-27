@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -11,9 +12,13 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/finally';
 import 'rxjs/add/observable/empty';
 
+import { routes } from '../../routes';
+
 import { ApiAccess } from '../../interfaces/api-access';
+import { CanComponentDeactivate } from '../../interfaces/can-component-deactivate';
 import { AccessTokenService } from '../access-token.service';
 import { AuthService } from '../auth.service';
+import { DiscardChangesService } from '../../shared/discard-changes.service';
 import { ExceptionService } from '../../core/exception.service';
 import { RegisterFormQuestionsService } from './register-form-questions.service';
 import { QuestionBase } from '../../shared/question-base';
@@ -25,9 +30,9 @@ import { ConfirmedPasswordFormService } from '../confirmed-password-form/confirm
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  providers: [RegisterFormQuestionsService]
+  providers: [DiscardChangesService, RegisterFormQuestionsService]
 })
-export class RegisterComponent implements OnInit, OnDestroy {
+export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   questions: any;
 
   busy: boolean;
@@ -37,6 +42,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   email: string;
   name: string;
 
+  registrationForm: FormGroup;
   emailForm: FormGroup;
   nameForm: FormGroup;
   passwordForm: FormGroup;
@@ -47,6 +53,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private accessToken: AccessTokenService,
     private auth: AuthService,
     private confirmedPasswordForm: ConfirmedPasswordFormService,
+    private discardChanges: DiscardChangesService,
     private exception: ExceptionService,
     private questionControl: QuestionControlService,
     private questionSource: RegisterFormQuestionsService,
@@ -55,9 +62,16 @@ export class RegisterComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.auth.clientGrantToken().subscribe(apiAccess => this.accessToken.store('clientAccess', apiAccess));
+
     this.questions = this.questionSource.get();
     this.emailForm = this.questionControl.toFormGroup(this.questions.email);
     this.nameForm = this.questionControl.toFormGroup(this.questions.name);
+
+    this.registrationForm = new FormGroup({
+      'name': this.nameForm,
+      'email': this.emailForm,
+    });
 
     this.confirmedPasswordForm.buttonLabel = 'Register';
 
@@ -65,24 +79,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .do(email => this.verified = false)
       .debounceTime(400)  
       .distinctUntilChanged()
-      .switchMap(email => {
-        if(this.emailForm.valid)
-        {
-          return this.verify(email)
-            .finally(() => this.busy = false)
-            .catch(error => {
-              this.exception.handle(error);
-              return Observable.empty();
-            });
-        }
-
-        return Observable.empty();
-      })
-      .subscribe((hasDuplicate: boolean) => {
-        this.hasDuplicate = hasDuplicate;
-        this.questions.email.find(form => form.key === 'email').showCustomError = hasDuplicate;
-        this.verified = true;
-      });
+      .switchMap(email => this.checkEmail(email))
+      .subscribe((hasDuplicate: boolean) => this.confirmEmail(hasDuplicate));
 
     this.confirmedPasswordForm.passwordForm$.subscribe(form => {
       this.passwordForm = form; 
@@ -92,6 +90,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.emailSubscription.unsubscribe();
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if(this.registrationForm.dirty && !this.discardChanges.submitted) return this.discardChanges.confirm();
+
+    return true;
   }
 
   /**
@@ -116,34 +120,22 @@ export class RegisterComponent implements OnInit, OnDestroy {
   register() {
     if(this.emailForm.valid && !this.hasDuplicate)
     {
-      const payload = {
-        name: this.nameForm.get('name').value,
-        email: this.emailForm.get('email').value,
-        password: this.passwordForm.get('password').value,
-        password_confirmation: this.passwordForm.get('password_confirmation').value
-      }
-
-      this.auth.register(payload)
-        .catch(error => {
-          this.confirmedPasswordForm.busy = false;
-          this.exception.handle(error);
-          return Observable.empty();
-        })
-        .switchMap(user => {
-          return this.auth.login(payload.email, payload.password)
-            .finally(() => this.confirmedPasswordForm.busy = false)
-            .catch(error => {
-              this.exception.handle(error);
-              return Observable.empty();
-            });
-        })
-        .subscribe((apiAccess: ApiAccess) => {
-          if(apiAccess) {
-            this.accessToken.store('apiAccess', apiAccess);
-            this.router.navigate(['/']);
-          };
-        });
+      this.auth.register(this.payload())
+        .catch(error => this.catchRegister(error))
+        .switchMap(user => this.attemptLogin(this.payload()))
+        .subscribe((apiAccess: ApiAccess) => this.redirectToHome(apiAccess));
     }
+  }
+
+  /**
+   * Sends a email verification request in the resource.
+   * 
+   * @param email 
+   */
+  protected checkEmail(email: string) {
+    if(this.emailForm.valid && !this.busy) return this.verify(email).do(() => this.busy = true);
+
+    return Observable.empty();
   }
 
   /**
@@ -151,14 +143,72 @@ export class RegisterComponent implements OnInit, OnDestroy {
    * 
    * @param email 
    */
-  verify(email: string): Observable<boolean> {
-    if(this.emailForm.valid && !this.busy)
-    {
-      this.busy = true;
-  
-      return this.auth.validateEmail({ email });
-    }
+  protected verify(email: string): Observable<boolean | {}> {
+    return this.auth.validateEmail({ email })
+      .finally(() => this.busy = false)
+      .catch(error => {
+        this.exception.handle(error);
+        return Observable.empty();
+      });
+  }
 
+  /**
+   * Confirms the verification process.
+   * 
+   * @param hasDuplicate 
+   */
+  protected confirmEmail(hasDuplicate: boolean) {
+    this.hasDuplicate = hasDuplicate;
+    this.questions.email.find(form => form.key === 'email').showCustomError = hasDuplicate;
+    this.verified = true;
+  }
+
+  /**
+   * The payload for account registration.
+   * 
+   */
+  protected payload() {
+    return {
+      name: this.nameForm.get('name').value,
+      email: this.emailForm.get('email').value,
+      password: this.passwordForm.get('password').value,
+      password_confirmation: this.passwordForm.get('password_confirmation').value
+    }
+  }
+
+  /**
+   * Catch errors upon registration.
+   * 
+   * @param error 
+   */
+  protected catchRegister(error: HttpErrorResponse) {
+    this.confirmedPasswordForm.busy = false;
+    this.exception.handle(error);
     return Observable.empty();
+  }
+
+  /**
+   * Login the credentials from payload
+   * 
+   * @param payload 
+   */
+  protected attemptLogin(payload: { name:string, email:string, password:string, password_confirmation:string  }) {
+    return this.auth.login(payload.email, payload.password)
+      .finally(() => this.confirmedPasswordForm.busy = false)
+      .catch(error => {
+        this.exception.handle(error);
+        return Observable.empty();
+      });
+  }
+
+  /**
+   * Store the ApiAccess to storage and navigates to home page.
+   * 
+   * @param apiAccess 
+   */
+  protected redirectToHome(apiAccess: ApiAccess) {
+    this.accessToken.store('apiAccess', apiAccess);
+    this.discardChanges.submitted = true;
+    this.router.navigate([routes.home]);
   }
 }
