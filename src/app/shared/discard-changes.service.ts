@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
-// import 'rxjs/add/operator/first';
 
 import { ConfirmationDialogService } from '../core/confirmation-dialog.service';
 
@@ -15,6 +14,10 @@ export class DiscardChangesService {
 
   constructor(private confirmationDialog: ConfirmationDialogService) { }
 
+  /**
+   * Opens a confirmation dialog and returns a boolean response.
+   * 
+   */
   confirm() : Observable<boolean> {
     return this.confirmationDialog.open({ 
       title: this.title,
