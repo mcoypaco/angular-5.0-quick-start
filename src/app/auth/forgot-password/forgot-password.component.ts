@@ -4,6 +4,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import 'rxjs/add/operator/finally';
 
+import { AccessTokenService } from '../access-token.service';
 import { AuthService } from '../auth.service';
 import { ExceptionService } from '../../core/exception.service';
 import { environment } from '../../../environments/environment';
@@ -20,6 +21,7 @@ export class ForgotPasswordComponent implements OnInit {
   error: string;
   
   constructor(
+    private accessToken: AccessTokenService,
     private auth: AuthService,
     private exception: ExceptionService,
     private http: HttpClient,
@@ -28,6 +30,8 @@ export class ForgotPasswordComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.auth.clientGrantToken().subscribe(apiAccess => this.accessToken.store('clientAccess', apiAccess));
+
     this.form = new FormGroup({ 
       email: new FormControl('', [Validators.required, Validators.email]) 
     });

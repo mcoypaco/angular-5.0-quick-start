@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ApiAccess } from '../interfaces/api-access';
+import { ApiService } from '../core/api.service';
 import { AccessTokenService } from './access-token.service';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user';
@@ -13,10 +14,15 @@ const { client_id, client_secret } = environment.laravel.passport;
 export class AuthService {
   redirectUrl: string = '/';
 
-  constructor(private accessToken: AccessTokenService, private http: HttpClient) { 
-    this.clientGrantToken().subscribe(apiAccess => this.accessToken.store('clientAccess', apiAccess));
-  }
+  constructor(
+    private api: ApiService,
+    private accessToken: AccessTokenService, 
+    private http: HttpClient
+  ) { }
 
+  /**
+   * Asks for a token from the API server
+   */
   clientGrantToken(): Observable<ApiAccess> {
     return this.http.post<ApiAccess>(`${environment.laravel.url}/oauth/token`, {
       grant_type: 'client_credentials',
@@ -25,6 +31,9 @@ export class AuthService {
     });
   }
 
+  /**
+   * Set Authorization headers for API call.
+   */
   clientHeaders(): HttpHeaders {
     return new HttpHeaders().set('Authorization', `${this.accessToken.get('clientAccess').token_type} ${this.accessToken.get('clientAccess').access_token}`);
   }
@@ -48,11 +57,8 @@ export class AuthService {
   /**
    * Logout the authenticated user.
    */
-  logout(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.accessToken.delete('apiAccess');
-      resolve(true);
-    });
+  logout(): Observable<boolean> {
+    return this.http.post<boolean>(`${environment.laravel.url}/api/logout`, {}, { headers: this.api.headers() });
   }
 
   /**

@@ -50,6 +50,8 @@ export class PasswordResetComponent implements OnInit {
   ) { }
   
   ngOnInit() {  
+    this.auth.clientGrantToken().subscribe(apiAccess => this.accessToken.store('clientAccess', apiAccess));
+
     this.activatedRoute.paramMap.subscribe(params => this.token = params.get('token'));
 
     this.questions = this.questionSource.get();
