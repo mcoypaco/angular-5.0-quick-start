@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
+import { AccessTokenService } from '../auth/access-token.service'
+import { ExceptionService } from '../core/exception.service';
 
 @Component({
   selector: 'app-layout',
@@ -10,16 +12,22 @@ import { AuthService } from '../auth/auth.service';
 })
 export class LayoutComponent implements OnInit {
 
-  constructor(private auth: AuthService, private router: Router) { }
+  constructor(
+    private auth: AuthService, 
+    private accessToken: AccessTokenService,
+    private exception: ExceptionService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
   }
 
   logout() {
     this.auth.logout()
-      .then(resp => {
-        console.log(resp);
-        this.router.navigate(['/login'])
-      });
+      .subscribe(
+        resp => this.accessToken.delete('apiAccess'),
+        error => this.exception.handle(error),
+        () => this.router.navigate(['/login'])
+      );
   }
 }
