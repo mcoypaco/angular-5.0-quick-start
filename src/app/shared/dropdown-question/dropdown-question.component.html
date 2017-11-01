@@ -3,7 +3,7 @@
     <!-- Prefix -->
     <span matPrefix *ngIf="question.prefix">{{ question.prefix }}</span>
     <!-- Select -->
-    <mat-select [placeholder]="question.label" [required]="question.required">
+    <mat-select [formControlName]="question.key" [placeholder]="question.label" [required]="question.required">
       <mat-option *ngFor="let option of question.options" [value]="option">
         <ng-container *ngIf="question.optionLabel; else elseTemplate">
           {{ option[question.optionLabel] }}

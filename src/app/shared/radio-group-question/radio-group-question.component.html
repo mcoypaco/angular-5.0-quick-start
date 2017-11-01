@@ -1,0 +1,14 @@
+<div [formGroup]="form" fxLayout="column">
+  <span class="mat-title">{{ question.label }}</span>
+  <mat-radio-group [formControlName]="question.key" [fxLayout]="question.layout" [fxLayoutAlign]="question.align" [fxLayoutGap]="question.gap">
+    <mat-radio-button *ngFor="let option of question.options" [value]="option" [fxFlex]="question.flex" [color]="question.color">
+      <ng-container *ngIf="question.optionLabel; else elseTemplate">
+        {{ option[question.optionLabel] }}
+      </ng-container>
+      <ng-template #elseTemplate>
+        {{ option }}
+      </ng-template>
+    </mat-radio-button>
+  </mat-radio-group>
+</div>
+<app-input-error [message]="question.customError" *ngIf="question.showCustomError"></app-input-error>
