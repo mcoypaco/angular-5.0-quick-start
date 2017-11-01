@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/finally';
 
 import { AuthService } from '../auth.service';
@@ -16,10 +17,11 @@ import { QuestionControlService } from '../../shared/question-control.service';
   styleUrls: ['./login.component.scss'],
   providers: [LoginFormQuestionsService],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   busy: boolean;
   invalidCredentials: boolean;
   form: FormGroup;
+  formSubscription: Subscription;
   questions: QuestionBase<any>[];
   
   constructor(
@@ -32,8 +34,13 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.questions = this.questionSource.getQuestions();
+    this.questions = this.questionSource.get();
     this.form = this.questionControl.toFormGroup(this.questions);
+    this.formSubscription = this.form.valueChanges.subscribe(data => this.questionControl.setErrorMessages(this.form, this.questions));
+  }
+
+  ngOnDestroy() {
+    this.formSubscription.unsubscribe();
   }
 
   /**

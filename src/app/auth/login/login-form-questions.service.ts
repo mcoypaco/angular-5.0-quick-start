@@ -9,7 +9,10 @@ export class LoginFormQuestionsService {
 
   constructor() { }
 
-  getQuestions() {
+  /**
+   * Returns the questions source as a QuestonBase array
+   */
+  get() {
     let questions: QuestionBase<any>[] = [
       new TextboxQuestion({
         key: 'email',
@@ -17,7 +20,10 @@ export class LoginFormQuestionsService {
         type: 'email',
         required: true,
         validators: [Validators.required, Validators.email],
-        error: 'Email is required and must be valid.',
+        validationMessages: {
+          required: 'Email is required.',
+          email: 'Email must be valid.'
+        },
         order: 1
       }),
       
@@ -27,7 +33,10 @@ export class LoginFormQuestionsService {
         type: 'password',
         required: true,
         validators: [Validators.required, Validators.minLength(8)],
-        error: 'Password is required and at least 8 characters.',
+        validationMessages: {
+          required: 'Password is required.',
+          minlength: 'Password must be at least 8 characters.'
+        },
         order: 2
       }),
 

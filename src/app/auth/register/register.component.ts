@@ -48,6 +48,8 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
   passwordForm: FormGroup;
 
   emailSubscription: Subscription;
+  emailFormSubscription: Subscription;
+  nameFormSubscription: Subscription;
 
   constructor(
     private accessToken: AccessTokenService,
@@ -75,6 +77,11 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
 
     this.confirmedPasswordForm.buttonLabel = 'Register';
 
+    this.confirmedPasswordForm.passwordForm$.subscribe(form => {
+      this.passwordForm = form; 
+      this.register();
+    });
+
     this.emailSubscription = this.emailForm.get('email').valueChanges
       .do(email => this.verified = false)
       .debounceTime(400)  
@@ -82,16 +89,20 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
       .switchMap(email => this.checkEmail(email))
       .subscribe((hasDuplicate: boolean) => this.confirmEmail(hasDuplicate));
 
-    this.confirmedPasswordForm.passwordForm$.subscribe(form => {
-      this.passwordForm = form; 
-      this.register();
-    });
+    this.emailFormSubscription = this.emailForm.valueChanges.subscribe(data => this.questionControl.setErrorMessages(this.emailForm, this.questions.email));
+
+    this.nameFormSubscription = this.nameForm.valueChanges.subscribe(data => this.questionControl.setErrorMessages(this.nameForm, this.questions.name));
   }
 
   ngOnDestroy() {
     this.emailSubscription.unsubscribe();
+    this.emailFormSubscription.unsubscribe();
+    this.nameFormSubscription.unsubscribe();
   }
 
+  /**
+   * Prompts the user when leaving a not submitted dirty form.
+   */
   canDeactivate(): Observable<boolean> | boolean {
     if(this.registrationForm.dirty && !this.discardChanges.submitted) return this.discardChanges.confirm();
 
@@ -118,7 +129,7 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
    * 
    */
   register() {
-    if(this.emailForm.valid && !this.hasDuplicate)
+    if(this.nameForm.valid && this.emailForm.valid && !this.hasDuplicate)
     {
       this.auth.register(this.payload())
         .catch(error => this.catchRegister(error))

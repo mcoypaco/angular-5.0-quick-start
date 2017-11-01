@@ -15,6 +15,7 @@ export class ConfirmedPasswordFormComponent implements OnInit, OnDestroy {
   passwordsMatch: boolean;
 
   confirmPasswordSubscription: Subscription;
+  passwordFormSubscription: Subscription;
   passwordSubscription: Subscription;
 
   constructor(
@@ -25,6 +26,9 @@ export class ConfirmedPasswordFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.questions = this.confirmedPasswordForm.questions();
     this.confirmedPasswordForm.form = this.questionControl.toFormGroup(this.questions);
+
+    this.passwordFormSubscription = this.confirmedPasswordForm.form.valueChanges
+      .subscribe(data => this.questionControl.setErrorMessages(this.confirmedPasswordForm.form, this.questions))
 
     this.passwordSubscription = this.confirmedPasswordForm.form.get('password').valueChanges
       .subscribe(password => {
@@ -40,6 +44,7 @@ export class ConfirmedPasswordFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.passwordFormSubscription.unsubscribe();
     this.passwordSubscription.unsubscribe();
     this.confirmPasswordSubscription.unsubscribe();
   }

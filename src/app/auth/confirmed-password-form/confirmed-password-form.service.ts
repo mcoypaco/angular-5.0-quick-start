@@ -23,7 +23,10 @@ export class ConfirmedPasswordFormService {
         label: 'Password',
         required: true,
         validators: [Validators.required, Validators.minLength(8)],
-        error: 'Password is required and at least 8 characters.',
+        validationMessages: {
+          required: 'Password is required',
+          minlength: 'Password must be at least 8 characters',
+        },
         customError: `Passwords doesn't match.`,
         order: 1
       }),
@@ -33,7 +36,10 @@ export class ConfirmedPasswordFormService {
         label: 'Confirm Password',
         required: true,
         validators: [Validators.required, Validators.minLength(8)],
-        error: 'Confirm password is required and at least 8 characters.',
+        validationMessages: {
+          required: 'Confirm password is required',
+          minlength: 'Confirm password must be at least 8 characters',
+        },
         customError: `Passwords doesn't match.`,
         order: 2
       }),
@@ -43,7 +49,7 @@ export class ConfirmedPasswordFormService {
   }
 
   /**
-   * 
+   * Sends the confirmed password FormGroup instance.
    */
   submit() {
     this.busy = true;

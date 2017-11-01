@@ -9,7 +9,7 @@ export class QuestionControlService {
   constructor() { }
 
   /**
-   * Creates a form group instance of the QuestionBase
+   * Creates a form group instance of the QuestionBase collection.
    * 
    * @param questions 
    */
@@ -25,7 +25,7 @@ export class QuestionControlService {
   }
 
   /**
-   * Set the appropriate error messages per form control.
+   * Set the error messages of the form controls.
    * 
    * @param form 
    * @param questions 

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 
+import { QuestionBase } from '../../shared/question-base';
 import { TextboxQuestion } from '../../shared/textbox-question';
 
 @Injectable()
-export class PasswordResetFormQuestionsService {
+export class ForgotPasswordFormQuestionsService {
   
   /**
    * Returns the questions source as a QuestonBase array
@@ -27,4 +28,5 @@ export class PasswordResetFormQuestionsService {
 
     return questions;
   }
+
 }

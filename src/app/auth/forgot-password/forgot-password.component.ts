@@ -1,30 +1,38 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/finally';
 
 import { AccessTokenService } from '../access-token.service';
 import { AuthService } from '../auth.service';
 import { ExceptionService } from '../../core/exception.service';
+import { ForgotPasswordFormQuestionsService } from './forgot-password-form-questions.service';
 import { environment } from '../../../environments/environment';
 import { PushNotificationService } from '../../core/push-notification.service';
+import { QuestionBase } from '../../shared/question-base';
+import { QuestionControlService } from '../../shared/question-control.service';
+import { routes } from '../../routes';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.scss']
+  styleUrls: ['./forgot-password.component.scss'],
+  providers: [ForgotPasswordFormQuestionsService]
 })
-export class ForgotPasswordComponent implements OnInit {
+export class ForgotPasswordComponent implements OnInit, OnDestroy {
   busy: boolean;
   form: FormGroup;
+  formSubscription: Subscription;
   error: string;
+  questions: QuestionBase<any>[];
   
   constructor(
     private accessToken: AccessTokenService,
     private auth: AuthService,
     private exception: ExceptionService,
-    private http: HttpClient,
+    private questionControl: QuestionControlService,
+    private questionSource : ForgotPasswordFormQuestionsService,
     private pushNotification: PushNotificationService,
     private router: Router,
   ) { }
@@ -32,9 +40,14 @@ export class ForgotPasswordComponent implements OnInit {
   ngOnInit() {
     this.auth.clientGrantToken().subscribe(apiAccess => this.accessToken.store('clientAccess', apiAccess));
 
-    this.form = new FormGroup({ 
-      email: new FormControl('', [Validators.required, Validators.email]) 
-    });
+    this.questions = this.questionSource.get();
+    this.form = this.questionControl.toFormGroup(this.questions);
+
+    this.formSubscription = this.form.valueChanges.subscribe(data => this.questionControl.setErrorMessages(this.form, this.questions));
+  }
+
+  ngOnDestroy() {
+    this.formSubscription.unsubscribe();
   }
 
   submit() {
@@ -43,7 +56,7 @@ export class ForgotPasswordComponent implements OnInit {
     if(this.form.valid && !this.busy) {
       this.busy = true;
 
-      this.http.post(`${environment.laravel.url}/api/password/reset`, payload, { headers: this.auth.clientHeaders() })
+      this.auth.forgotPassword(payload)
         .finally(() => this.busy = false)
         .subscribe(
           resp => this.pushNotification.simple('We have e-mailed your password reset link!'),
@@ -52,7 +65,7 @@ export class ForgotPasswordComponent implements OnInit {
 
             this.error = 'Email is invalid.';
           },
-          () => this.router.navigate(['/login'])
+          () => this.router.navigate([routes.login])
         );
     }
   }
