@@ -87,4 +87,23 @@ export class AuthService {
   validateEmail(payload: { email:string }) : Observable<boolean> {
     return this.http.post<boolean>(`${environment.laravel.url}/api/user/check-duplicate`, payload, { headers: this.clientHeaders() });
   }
+
+  /**
+   * Sends a forgot password request to the server.
+   * 
+   * @param payload 
+   */
+  forgotPassword(payload: { email:string }) {
+    return this.http.post(`${environment.laravel.url}/api/password/reset`, payload, { headers: this.clientHeaders() })
+  }
+
+  /**
+   * Resets the user password.
+   * 
+   * @param token 
+   * @param payload 
+   */
+  resetPassword(token: string, payload) {
+    return this.http.post(`${environment.laravel.url}/api/password/reset/${token}`, payload, { headers: this.clientHeaders()})
+  }
 }
