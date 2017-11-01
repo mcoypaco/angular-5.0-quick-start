@@ -2,7 +2,6 @@ export class QuestionBase<T> {
     value: T;
     key: string;
     label: string;
-    optionLabel: string;
     required: boolean;
     validators: any[];
     validationMessages: object;
@@ -27,7 +26,6 @@ export class QuestionBase<T> {
       this.value = options.value;
       this.key = options.key || '';
       this.label = options.label || '';
-      this.optionLabel = options.optionLabel || '';
       this.required = options.required ? true : false;
       this.validators = options.validators;
       this.validationMessages = options.validationMessages;
