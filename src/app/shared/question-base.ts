@@ -4,7 +4,8 @@ export class QuestionBase<T> {
     label: string;
     required: boolean;
     validators: any[];
-    error: string;
+    validationMessages: object;
+    errorMessage: string;
     customError: string;
     showCustomError: boolean;
     order: number;
@@ -16,7 +17,8 @@ export class QuestionBase<T> {
         label?: string,
         required?: boolean,
         validators?: any[],
-        error?: string,
+        validationMessages?: object,
+        errorMessage?: string,
         customError?: string,
         order?: number,
       } = {}) {
@@ -25,7 +27,8 @@ export class QuestionBase<T> {
       this.label = options.label || '';
       this.required = options.required ? true : false;
       this.validators = options.validators;
-      this.error = options.error;
+      this.validationMessages = options.validationMessages;
+      this.errorMessage = options.errorMessage;
       this.customError = options.customError;
       this.showCustomError = false;
       this.order = options.order === undefined ? 1 : options.order;

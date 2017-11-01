@@ -8,6 +8,11 @@ export class QuestionControlService {
 
   constructor() { }
 
+  /**
+   * Creates a form group instance of the QuestionBase
+   * 
+   * @param questions 
+   */
   toFormGroup(questions: QuestionBase<any>[]) {
     let group: any = {};
     
@@ -17,5 +22,26 @@ export class QuestionControlService {
     });
 
     return new FormGroup(group);
+  }
+
+  /**
+   * Set the appropriate error messages per form control.
+   * 
+   * @param form 
+   * @param questions 
+   */
+  setErrorMessages(form: FormGroup, questions: QuestionBase<any>[]) {
+    questions.forEach(question => {
+      question.errorMessage = '';
+
+      const control = form.get(question.key);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = question.validationMessages;
+        for (const key in control.errors) {
+          question.errorMessage += messages[key] + ' ';
+        }
+      }
+    });
   }
 }
