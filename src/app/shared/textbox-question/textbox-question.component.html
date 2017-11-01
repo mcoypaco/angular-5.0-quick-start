@@ -3,7 +3,7 @@
     <!-- Prefix -->
     <span matPrefix *ngIf="question.prefix">{{ question.prefix }}</span>
     <!-- Input -->
-    <input matInput placeholder="{{question.label}}" [type]="question.type" [formControlName]="question.key" [required]="question.required">
+    <input matInput [placeholder]="question.label" [type]="question.type" [formControlName]="question.key" [required]="question.required">
     <!-- Suffix -->
     <span matSuffix *ngIf="question.suffix">{{ question.suffix }}</span>
     <!-- Suffix Icon -->
