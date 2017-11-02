@@ -1,0 +1,4 @@
+<div [formGroup]="form" fxLayout="column">
+  <mat-checkbox [formControlName]="question.key" [color]="question.color">{{ question.label }}</mat-checkbox>
+</div>
+<app-input-error [message]="question.customError" *ngIf="question.showCustomError"></app-input-error>
