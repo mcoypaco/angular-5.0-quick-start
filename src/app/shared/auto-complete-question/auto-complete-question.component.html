@@ -1,0 +1,29 @@
+<div [formGroup]="form">
+  <mat-form-field fxFlex>
+    <!-- Prefix -->
+    <span matPrefix *ngIf="question.prefix">{{ question.prefix }}</span>
+    <!-- Input -->
+    <input matInput [placeholder]="question.label" type="text" [formControlName]="question.key" [required]="question.required" [matAutocomplete]="auto">
+    <!-- Autocomplete -->
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="question.displayFn">
+      <mat-option *ngFor="let option of question.autoCompleteItems" [value]="option">
+        <ng-container *ngIf="question.optionLabel; else elseTemplate">
+          {{ option[question.optionLabel] }}
+        </ng-container>
+        <ng-template #elseTemplate>
+          {{ option }}
+        </ng-template>
+      </mat-option>
+    </mat-autocomplete>
+    <!-- Suffix -->
+    <span matSuffix *ngIf="question.suffix">{{ question.suffix }}</span>
+    <!-- Suffix Icon -->
+    <mat-icon matSuffix class="material-icon" *ngIf="question.suffixIcon">{{ question.suffixIcon }}</mat-icon>
+    <!-- Hints -->
+    <mat-hint align="start" *ngIf="question.hintStart">{{ question.hintStart }}</mat-hint>
+    <mat-hint align="end" *ngIf="question.hintEnd">{{ question.hintEnd }}</mat-hint>
+    <!-- Error -->
+    <mat-error>{{question.errorMessage}}</mat-error>
+  </mat-form-field>
+</div>
+<app-input-error [message]="question.customError" *ngIf="question.showCustomError"></app-input-error>

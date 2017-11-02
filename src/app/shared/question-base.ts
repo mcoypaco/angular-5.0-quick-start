@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs/Observable';
+
 export class QuestionBase<T> {
     value: T;
     key: string;
@@ -20,6 +22,8 @@ export class QuestionBase<T> {
     suffixIcon?: string;
     hintStart?: string;
     hintEnd?: string;
+    min?: number;
+    max?: number;
 
     /**
      * Dropdown and radio group
@@ -35,6 +39,17 @@ export class QuestionBase<T> {
     gap?: any;
     flex?: number;
     color?: string;
+
+    /**
+     * Autocomplete
+     */
+    autoCompleteItems?: any[];
+
+    /**
+     * Datepicker
+     */
+    maxDate?: Date;
+    minDate?: Date;
 
     constructor(options: {
         value?: T,

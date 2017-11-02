@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatRadioModule, MatSelectModule, MatSlideToggleModule} from '@angular/material';
+import { MatAutocompleteModule, MatButtonModule, MatCheckboxModule, MatDatepickerModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatNativeDateModule, MatRadioModule, MatSelectModule, MatSlideToggleModule} from '@angular/material';
 
 import { DynamicFormQuestionComponent } from './dynamic-form-question/dynamic-form-question.component';
 import { QuestionControlService } from './question-control.service';
@@ -13,6 +13,9 @@ import { InputErrorComponent } from './input-error/input-error.component';
 import { DropdownQuestionComponent } from './dropdown-question/dropdown-question.component';
 import { RadioGroupQuestionComponent } from './radio-group-question/radio-group-question.component';
 import { SlideToggleQuestionComponent } from './slide-toggle-question/slide-toggle-question.component';
+import { CheckboxQuestionComponent } from './checkbox-question/checkbox-question.component';
+import { AutoCompleteQuestionComponent } from './auto-complete-question/auto-complete-question.component';
+import { DatepickerQuestionComponent } from './datepicker-question/datepicker-question.component';
 
 @NgModule({
   imports: [
@@ -20,11 +23,15 @@ import { SlideToggleQuestionComponent } from './slide-toggle-question/slide-togg
     FlexLayoutModule,
     FormsModule,
     HttpClientModule,
+    MatAutocompleteModule,
     MatButtonModule, 
+    MatCheckboxModule,
+    MatDatepickerModule,
     MatFormFieldModule, 
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatNativeDateModule,
     MatRadioModule,
     MatSlideToggleModule,
     MatSelectModule,
@@ -42,9 +49,10 @@ import { SlideToggleQuestionComponent } from './slide-toggle-question/slide-togg
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatNativeDateModule,
     ReactiveFormsModule,
   ],
-  declarations: [DynamicFormQuestionComponent, TextboxQuestionComponent, PasswordQuestionComponent, InputErrorComponent, DropdownQuestionComponent, RadioGroupQuestionComponent, SlideToggleQuestionComponent],
+  declarations: [DynamicFormQuestionComponent, TextboxQuestionComponent, PasswordQuestionComponent, InputErrorComponent, DropdownQuestionComponent, RadioGroupQuestionComponent, SlideToggleQuestionComponent, CheckboxQuestionComponent, AutoCompleteQuestionComponent, DatepickerQuestionComponent],
   providers: [QuestionControlService]
 })
 export class SharedModule { }
