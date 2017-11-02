@@ -1,0 +1,4 @@
+<div [formGroup]="form" fxLayout="column">
+  <mat-slide-toggle [formControlName]="question.key" [color]="question.color">{{ question.label }}</mat-slide-toggle>
+</div>
+<app-input-error [message]="question.customError" *ngIf="question.showCustomError"></app-input-error>

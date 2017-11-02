@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatRadioModule, MatSelectModule} from '@angular/material';
+import { MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatRadioModule, MatSelectModule, MatSlideToggleModule} from '@angular/material';
 
 import { DynamicFormQuestionComponent } from './dynamic-form-question/dynamic-form-question.component';
 import { QuestionControlService } from './question-control.service';
@@ -12,6 +12,7 @@ import { PasswordQuestionComponent } from './password-question/password-question
 import { InputErrorComponent } from './input-error/input-error.component';
 import { DropdownQuestionComponent } from './dropdown-question/dropdown-question.component';
 import { RadioGroupQuestionComponent } from './radio-group-question/radio-group-question.component';
+import { SlideToggleQuestionComponent } from './slide-toggle-question/slide-toggle-question.component';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import { RadioGroupQuestionComponent } from './radio-group-question/radio-group-
     MatInputModule,
     MatListModule,
     MatRadioModule,
+    MatSlideToggleModule,
     MatSelectModule,
     ReactiveFormsModule,
   ],
@@ -42,7 +44,7 @@ import { RadioGroupQuestionComponent } from './radio-group-question/radio-group-
     MatListModule,
     ReactiveFormsModule,
   ],
-  declarations: [DynamicFormQuestionComponent, TextboxQuestionComponent, PasswordQuestionComponent, InputErrorComponent, DropdownQuestionComponent, RadioGroupQuestionComponent],
+  declarations: [DynamicFormQuestionComponent, TextboxQuestionComponent, PasswordQuestionComponent, InputErrorComponent, DropdownQuestionComponent, RadioGroupQuestionComponent, SlideToggleQuestionComponent],
   providers: [QuestionControlService]
 })
 export class SharedModule { }
