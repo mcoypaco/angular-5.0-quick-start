@@ -15,7 +15,6 @@ export class RadioGroupQuestionComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.form);
   }
 
 }

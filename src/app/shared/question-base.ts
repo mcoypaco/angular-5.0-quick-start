@@ -11,6 +11,31 @@ export class QuestionBase<T> {
     order: number;
     controlType: string;
 
+    /**
+     * Textbox question
+     */
+    prefix?: string;
+    suffix?: string;
+    type?: string;
+    suffixIcon?: string;
+    hintStart?: string;
+    hintEnd?: string;
+
+    /**
+     * Dropdown and radio group
+     */
+    options?: any[];
+    optionLabel?: string;
+
+    /**
+     * Radio group
+     */
+    layout?: string;
+    align?: string;
+    gap?: any;
+    flex?: number;
+    color?: string;
+
     constructor(options: {
         value?: T,
         key?: string,
