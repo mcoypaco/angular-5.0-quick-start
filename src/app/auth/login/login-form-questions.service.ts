@@ -3,17 +3,18 @@ import { Validators } from '@angular/forms';
 
 import { QuestionBase } from '../../shared/question-base';
 import { TextboxQuestion } from '../../shared/textbox-question';
+import { SortingService } from '../../core/sorting.service';
 
 @Injectable()
 export class LoginFormQuestionsService {
 
-  constructor() { }
+  constructor(private sorting: SortingService) { }
 
   /**
    * Returns the questions source as a QuestonBase array
    */
   get() {
-    let questions: QuestionBase<any>[] = [
+    const questions: QuestionBase<any>[] = [
       new TextboxQuestion({
         key: 'email',
         label: 'Email',
@@ -42,7 +43,7 @@ export class LoginFormQuestionsService {
 
     ];
 
-    return questions.sort((a,b) => a.order - b.order);
+    return this.sorting.sortByNumericValue(questions, 'order');
   }
 
 }

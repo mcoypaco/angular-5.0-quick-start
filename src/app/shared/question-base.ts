@@ -22,8 +22,6 @@ export class QuestionBase<T> {
     suffixIcon?: string;
     hintStart?: string;
     hintEnd?: string;
-    min?: number;
-    max?: number;
 
     /**
      * Dropdown and radio group
@@ -50,6 +48,13 @@ export class QuestionBase<T> {
      */
     maxDate?: Date;
     minDate?: Date;
+
+    /**
+     * Ticker
+     */
+    min?: number;
+    max?: number;
+    step?: number;
 
     constructor(options: {
         value?: T,
