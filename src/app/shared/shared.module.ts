@@ -17,6 +17,7 @@ import { CheckboxQuestionComponent } from './checkbox-question/checkbox-question
 import { AutoCompleteQuestionComponent } from './auto-complete-question/auto-complete-question.component';
 import { DatepickerQuestionComponent } from './datepicker-question/datepicker-question.component';
 import { TickerQuestionComponent } from './ticker-question/ticker-question.component';
+import { ArrayQuestionComponent } from './array-question/array-question.component';
 
 @NgModule({
   imports: [
@@ -53,7 +54,7 @@ import { TickerQuestionComponent } from './ticker-question/ticker-question.compo
     MatNativeDateModule,
     ReactiveFormsModule,
   ],
-  declarations: [DynamicFormQuestionComponent, TextboxQuestionComponent, PasswordQuestionComponent, InputErrorComponent, DropdownQuestionComponent, RadioGroupQuestionComponent, SlideToggleQuestionComponent, CheckboxQuestionComponent, AutoCompleteQuestionComponent, DatepickerQuestionComponent, TickerQuestionComponent],
+  declarations: [DynamicFormQuestionComponent, TextboxQuestionComponent, PasswordQuestionComponent, InputErrorComponent, DropdownQuestionComponent, RadioGroupQuestionComponent, SlideToggleQuestionComponent, CheckboxQuestionComponent, AutoCompleteQuestionComponent, DatepickerQuestionComponent, TickerQuestionComponent, ArrayQuestionComponent],
   providers: [QuestionControlService]
 })
 export class SharedModule { }

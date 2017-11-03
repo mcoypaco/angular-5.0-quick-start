@@ -4,6 +4,7 @@ export class QuestionBase<T> {
     value: T;
     key: string;
     label: string;
+    formArray: boolean;
     required: boolean;
     validators: any[];
     validationMessages: object;
@@ -56,10 +57,16 @@ export class QuestionBase<T> {
     max?: number;
     step?: number;
 
+    /**
+     * Array 
+     */
+    questions?: [QuestionBase<any>[]];
+
     constructor(options: {
         value?: T,
         key?: string,
         label?: string,
+        formArray?: boolean,
         optionLabel?: string,
         required?: boolean,
         validators?: any[],
@@ -71,6 +78,7 @@ export class QuestionBase<T> {
       this.value = options.value;
       this.key = options.key || '';
       this.label = options.label || '';
+      this.formArray = options.formArray || false;
       this.required = options.required ? true : false;
       this.validators = options.validators;
       this.validationMessages = options.validationMessages;

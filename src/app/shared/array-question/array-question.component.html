@@ -1,0 +1,7 @@
+<div [formGroup]="form">
+  <div [formArrayName]="formArray.key">
+    <div [fxLayout]="formArray.layout" [fxLayoutAlign]="formArray.align" [fxLayoutGap]="formArray.gap" *ngFor="let control of form.controls[formArray.key].controls; let formArrayIndex=index" [formGroupName]="formArrayIndex">
+      <df-question *ngFor="let question of formArray.questions[formArrayIndex]" [question]="question" [form]="control"></df-question>
+    </div>
+  </div>
+</div>
