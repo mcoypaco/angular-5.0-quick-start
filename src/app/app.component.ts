@@ -6,5 +6,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
+  readonly color: string;
+  readonly showSpinner: boolean;
+
+  constructor() {
+    this.color = '#673ab7';
+    this.showSpinner = false;
+  }
 }
