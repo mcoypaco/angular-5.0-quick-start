@@ -57,7 +57,7 @@ export class ExceptionService {
    * @param error 
    */
   protected setError(error: any): void {
-    error.error = JSON.parse(error.error);
+    if(typeof error != 'object') error.error = JSON.parse(error.error);
     this.error = error;
   }
 

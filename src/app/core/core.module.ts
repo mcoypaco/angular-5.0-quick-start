@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule, MatSnackBarModule } from '@angular/material';
+import { NgProgressModule } from 'ngx-progressbar';
 
 import { SharedModule } from '../shared/shared.module';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -15,16 +16,19 @@ import { ForbiddenPageComponent } from './forbidden-page/forbidden-page.componen
 import { ConfirmationDialogService } from './confirmation-dialog.service';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { CanDeactivateGuard } from './can-deactivate.guard';
+import { ProgressService } from './progress.service';
 
 @NgModule({
   imports: [
     BrowserAnimationsModule,
     MatDialogModule,
     MatSnackBarModule,
+    NgProgressModule,
     SharedModule
   ],
+  exports: [NgProgressModule],
   declarations: [PageNotFoundComponent, AlertDialogComponent, ForbiddenPageComponent, ConfirmationDialogComponent],
-  providers: [ApiService, SortingService, UserDataService, ExceptionService, AlertDialogService, PushNotificationService, ConfirmationDialogService, CanDeactivateGuard],
+  providers: [ApiService, SortingService, UserDataService, ExceptionService, AlertDialogService, PushNotificationService, ConfirmationDialogService, CanDeactivateGuard, ProgressService],
   entryComponents: [AlertDialogComponent, ConfirmationDialogComponent]
 })
 export class CoreModule { }
