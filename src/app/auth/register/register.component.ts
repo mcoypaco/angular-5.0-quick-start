@@ -21,6 +21,7 @@ import { AuthService } from '../auth.service';
 import { DiscardChangesService } from '../../shared/discard-changes.service';
 import { ExceptionService } from '../../core/exception.service';
 import { RegisterFormQuestionsService } from './register-form-questions.service';
+import { ProgressService } from '../../core/progress.service';
 import { QuestionBase } from '../../shared/question-base';
 import { QuestionControlService } from '../../shared/question-control.service';
 import { UserDataService } from '../../core/resources/user-data.service';
@@ -47,6 +48,7 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
   nameForm: FormGroup;
   passwordForm: FormGroup;
 
+  confirmedPasswordFormSubscription: Subscription;
   emailSubscription: Subscription;
   emailFormSubscription: Subscription;
   nameFormSubscription: Subscription;
@@ -57,6 +59,7 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
     private confirmedPasswordForm: ConfirmedPasswordFormService,
     private discardChanges: DiscardChangesService,
     private exception: ExceptionService,
+    private progress: ProgressService,
     private questionControl: QuestionControlService,
     private questionSource: RegisterFormQuestionsService,
     private router: Router,
@@ -77,7 +80,7 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
 
     this.confirmedPasswordForm.buttonLabel = 'Register';
 
-    this.confirmedPasswordForm.passwordForm$.subscribe(form => {
+    this.confirmedPasswordFormSubscription = this.confirmedPasswordForm.passwordForm$.subscribe(form => {
       this.passwordForm = form; 
       this.register();
     });
@@ -98,6 +101,7 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
     this.emailSubscription.unsubscribe();
     this.emailFormSubscription.unsubscribe();
     this.nameFormSubscription.unsubscribe();
+    this.confirmedPasswordFormSubscription.unsubscribe();
   }
 
   /**
@@ -129,11 +133,19 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
    * 
    */
   register() {
-    if(this.nameForm.valid && this.emailForm.valid && !this.hasDuplicate)
+    if(this.nameForm.valid && this.emailForm.valid && !this.hasDuplicate && !this.progress.loading)
     {
+      this.progress.start();
+
       this.auth.register(this.payload())
-        .catch(error => this.catchRegister(error))
-        .switchMap(user => this.attemptLogin(this.payload()))
+        .catch(error => {
+          this.progress.done();
+          return this.catchRegister(error)
+        })
+        .switchMap(user => {
+          this.progress.inc(0.5); 
+          return this.attemptLogin(this.payload());
+        })
         .subscribe((apiAccess: ApiAccess) => this.redirectToHome(apiAccess));
     }
   }
@@ -144,7 +156,10 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
    * @param email 
    */
   protected checkEmail(email: string) {
-    if(this.emailForm.valid && !this.busy) return this.verify(email).do(() => this.busy = true);
+    if(this.emailForm.valid && !this.busy) {
+      this.busy = true; 
+      return this.verify(email);
+    }
 
     return Observable.empty();
   }
@@ -193,7 +208,6 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
    * @param error 
    */
   protected catchRegister(error: HttpErrorResponse) {
-    this.confirmedPasswordForm.busy = false;
     this.exception.handle(error);
     return Observable.empty();
   }
@@ -205,7 +219,6 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
    */
   protected attemptLogin(payload: { name:string, email:string, password:string, password_confirmation:string  }) {
     return this.auth.login(payload.email, payload.password)
-      .finally(() => this.confirmedPasswordForm.busy = false)
       .catch(error => {
         this.exception.handle(error);
         return Observable.empty();
@@ -220,6 +233,6 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
   protected redirectToHome(apiAccess: ApiAccess) {
     this.accessToken.store('apiAccess', apiAccess);
     this.discardChanges.submitted = true;
-    this.router.navigate([routes.home]);
+    this.router.navigate([routes.home]).then(resp => this.progress.done());
   }
 }

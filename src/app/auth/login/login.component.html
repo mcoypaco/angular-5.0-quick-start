@@ -11,15 +11,10 @@
           <div>
             <a routerLink="/password/reset" mat-button color="primary">Having trouble logging in?</a>
           </div>
-
-          <ng-container *ngIf="busy; else elseTemplate">
-            <mat-spinner></mat-spinner>
-          </ng-container>
-          <ng-template #elseTemplate>
-            <div fxLayout="row">
-              <button mat-raised-button type="submit" color="primary" fxFlex>Login</button>
-            </div>
-          </ng-template>
+          
+          <div fxLayout="row">
+            <button mat-raised-button type="submit" color="primary" fxFlex>Login</button>
+          </div>
         </form>
       </mat-card-content>
     </mat-card>

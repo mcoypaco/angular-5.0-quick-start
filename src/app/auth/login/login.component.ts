@@ -2,12 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/finally';
 
 import { AuthService } from '../auth.service';
 import { AccessTokenService } from '../access-token.service';
 import { ExceptionService } from '../../core/exception.service';
 import { LoginFormQuestionsService } from './login-form-questions.service';
+import { ProgressService } from '../../core/progress.service';
 import { QuestionBase } from '../../shared/question-base';
 import { QuestionControlService } from '../../shared/question-control.service';
 
@@ -18,7 +18,6 @@ import { QuestionControlService } from '../../shared/question-control.service';
   providers: [LoginFormQuestionsService],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  busy: boolean;
   invalidCredentials: boolean;
   form: FormGroup;
   formSubscription: Subscription;
@@ -28,6 +27,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private auth: AuthService,
     private accessToken: AccessTokenService,
     private exception: ExceptionService,
+    private progress: ProgressService,
     private questionControl: QuestionControlService, 
     private questionSource: LoginFormQuestionsService,
     private router: Router,
@@ -47,12 +47,12 @@ export class LoginComponent implements OnInit, OnDestroy {
    * Attempt login with user credentials
    */
   login() {
-    if(this.form.valid && !this.busy) {
-      this.busy = true; 
+    if(this.form.valid && !this.progress.loading) {
+      this.progress.start(); 
       this.invalidCredentials = false;
 
       this.auth.login(this.form.get('email').value, this.form.get('password').value)
-        .finally(() => this.busy = false)
+        .finally(() => this.progress.done())
         .subscribe(
           apiAccess => this.accessToken.store('apiAccess', apiAccess),
           error => this.handleError(error),

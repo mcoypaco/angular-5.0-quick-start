@@ -2,13 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/finally';
 
 import { AccessTokenService } from '../access-token.service';
 import { AuthService } from '../auth.service';
 import { ExceptionService } from '../../core/exception.service';
 import { ForgotPasswordFormQuestionsService } from './forgot-password-form-questions.service';
 import { environment } from '../../../environments/environment';
+import { ProgressService } from '../../core/progress.service';
 import { PushNotificationService } from '../../core/push-notification.service';
 import { QuestionBase } from '../../shared/question-base';
 import { QuestionControlService } from '../../shared/question-control.service';
@@ -21,7 +21,6 @@ import { routes } from '../../routes';
   providers: [ForgotPasswordFormQuestionsService]
 })
 export class ForgotPasswordComponent implements OnInit, OnDestroy {
-  busy: boolean;
   form: FormGroup;
   formSubscription: Subscription;
   error: string;
@@ -33,6 +32,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     private exception: ExceptionService,
     private questionControl: QuestionControlService,
     private questionSource : ForgotPasswordFormQuestionsService,
+    private progressService: ProgressService,
     private pushNotification: PushNotificationService,
     private router: Router,
   ) { }
@@ -51,13 +51,13 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   }
 
   submit() {
-    const payload = { email: this.form.get('email').value }
-
-    if(this.form.valid && !this.busy) {
-      this.busy = true;
+    if(this.form.valid && !this.progressService.loading) {
+      this.progressService.start();
+      
+      const payload = { email: this.form.get('email').value }
 
       this.auth.forgotPassword(payload)
-        .finally(() => this.busy = false)
+        .finally(() => this.progressService.done())
         .subscribe(
           resp => this.pushNotification.simple('We have e-mailed your password reset link!'),
           error => {

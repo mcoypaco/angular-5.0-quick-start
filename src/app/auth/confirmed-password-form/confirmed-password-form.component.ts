@@ -59,6 +59,6 @@ export class ConfirmedPasswordFormComponent implements OnInit, OnDestroy {
   }
 
   submit() {
-    if(!this.confirmedPasswordForm.busy && this.confirmedPasswordForm.form.valid && this.passwordsMatch) this.confirmedPasswordForm.submit();
+    if(this.confirmedPasswordForm.form.valid && this.passwordsMatch) this.confirmedPasswordForm.submit();
   }
 }

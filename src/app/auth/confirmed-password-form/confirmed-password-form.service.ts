@@ -7,7 +7,6 @@ import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class ConfirmedPasswordFormService {
-  busy: boolean;
   form: FormGroup;
   buttonLabel: string;
 
@@ -52,7 +51,6 @@ export class ConfirmedPasswordFormService {
    * Sends the confirmed password FormGroup instance.
    */
   submit() {
-    this.busy = true;
     this.passwordForm.next(this.form);
   }
 }

@@ -4,9 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/finally';
-import 'rxjs/add/operator/switchMap';
+import { switchMap } from 'rxjs/operators';
 import 'rxjs/add/observable/empty';
 
 import { ApiAccess } from '../../interfaces/api-access';
@@ -16,6 +14,7 @@ import { ConfirmedPasswordFormService } from '../confirmed-password-form/confirm
 import { ExceptionService } from '../../core/exception.service';
 import { environment } from '../../../environments/environment';
 import { PasswordResetFormQuestionsService } from './password-reset-form-questions.service';
+import { ProgressService } from '../../core/progress.service';
 import { PushNotificationService } from '../../core/push-notification.service';
 import { QuestionControlService } from '../../shared/question-control.service';
 import { routes } from '../../routes';
@@ -47,6 +46,7 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
     private auth: AuthService,
     public confirmedPasswordForm: ConfirmedPasswordFormService,
     private exception: ExceptionService,
+    private progress: ProgressService,
     private pushNotification: PushNotificationService,
     private questionControl: QuestionControlService,
     private questionSource: PasswordResetFormQuestionsService,
@@ -79,11 +79,14 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
   }
 
   resetPassword() {
-    if(this.emailForm.valid && this.passwordForm.valid) {
+    if(this.emailForm.valid && this.passwordForm.valid && !this.progress.loading) {
+      this.progress.start();
+
       this.auth.resetPassword(this.token, this.payload())
-        .finally(() => this.confirmedPasswordForm.busy = false)
+        .finally(() => this.progress.inc(0.5))
         .catch(error => this.catchResetPassword(error))
         .switchMap(resp => this.loginAttempt())
+        .finally(() => this.progress.done())
         .subscribe(
           (apiAccess: ApiAccess) => this.accessToken.store('apiAccess', apiAccess),
           error => this.exception.handle(error),
@@ -123,7 +126,7 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
    * 
    */
   protected loginAttempt() {
-    return this.auth.login(this.payload().email, this.payload().password).finally(() => this.confirmedPasswordForm.busy = false);
+    return this.auth.login(this.payload().email, this.payload().password).finally(() => this.progress.done());
   }
 }
 
