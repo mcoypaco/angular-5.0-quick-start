@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-import { ConfirmationDialogService } from '../core/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../core/confirmation-dialog/confirmation-dialog.service';
 
 @Injectable()
 export class DiscardChangesService {

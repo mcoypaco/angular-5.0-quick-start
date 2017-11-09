@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 
 import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
-import { AlertDialogService } from './alert-dialog.service';
+import { AlertDialogService } from './alert-dialog/alert-dialog.service';
 import { AuthService } from '../auth/auth.service';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-import { ConfirmationDialogService } from './confirmation-dialog.service';
+import { ConfirmationDialogService } from './confirmation-dialog/confirmation-dialog.service';
 import { PushNotificationService } from './push-notification.service';
 import { environment } from '../../environments/environment';
 

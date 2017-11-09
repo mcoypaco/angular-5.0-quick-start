@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
-import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
+import { AlertDialogComponent } from './alert-dialog.component';
 
 @Injectable()
 export class AlertDialogService {
