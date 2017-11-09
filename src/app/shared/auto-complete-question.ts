@@ -27,8 +27,4 @@ export class AutoCompleteQuestion extends QuestionBase<string> {
 
         optionLabel = this.optionLabel;
     }
-    
-    displayFn(data: any): string {
-        return optionLabel ? data[optionLabel] : data;
-    }
 }

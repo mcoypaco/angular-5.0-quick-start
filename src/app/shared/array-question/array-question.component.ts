@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+
+import { QuestionBase } from '../../shared/question-base';
 
 @Component({
   selector: 'app-array-question',
@@ -7,8 +8,8 @@ import { FormArray, FormGroup } from '@angular/forms';
   styleUrls: ['./array-question.component.scss']
 })
 export class ArrayQuestionComponent implements OnInit {
-  @Input() formArray: FormArray;
-  @Input() form: FormGroup;
+  @Input() formArray: QuestionBase<string>;
+  @Input() form;
 
   constructor() { }
 

@@ -44,6 +44,10 @@ export class QuestionBase<T> {
      */
     autoCompleteItems?: any[];
 
+    displayFn(data: any): string {
+        return this.optionLabel ? data[this.optionLabel] : data;
+    }
+
     /**
      * Datepicker
      */
