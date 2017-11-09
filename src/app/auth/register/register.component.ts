@@ -4,13 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/finally';
-import 'rxjs/add/observable/empty';
+import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 
 import { routes } from '../../routes';
 
@@ -87,9 +81,11 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
 
     this.emailSubscription = this.emailForm.get('email').valueChanges
       .do(email => this.verified = false)
-      .debounceTime(400)  
-      .distinctUntilChanged()
-      .switchMap(email => this.checkEmail(email))
+      .pipe(
+        debounceTime(400),  
+        distinctUntilChanged(),
+        switchMap(email => this.checkEmail(email))
+      )
       .subscribe((hasDuplicate: boolean) => this.confirmEmail(hasDuplicate));
 
     this.emailFormSubscription = this.emailForm.valueChanges.subscribe(data => this.questionControl.setErrorMessages(this.emailForm, this.questions.email));
@@ -138,14 +134,16 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
       this.progress.start();
 
       this.auth.register(this.payload())
-        .catch(error => {
-          this.progress.done();
-          return this.catchRegister(error)
-        })
-        .switchMap(user => {
-          this.progress.inc(0.5); 
-          return this.attemptLogin(this.payload());
-        })
+        .pipe(
+          catchError(error => {
+            this.progress.done();
+            return this.catchRegister(error)
+          }),
+          switchMap(user => {
+            this.progress.inc(0.5); 
+            return this.attemptLogin(this.payload());
+          })
+        )
         .subscribe((apiAccess: ApiAccess) => this.redirectToHome(apiAccess));
     }
   }
@@ -172,10 +170,12 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
   protected verify(email: string): Observable<boolean | {}> {
     return this.auth.validateEmail({ email })
       .finally(() => this.busy = false)
-      .catch(error => {
-        this.exception.handle(error);
-        return Observable.empty();
-      });
+      .pipe(
+        catchError(error => {
+          this.exception.handle(error);
+          return Observable.empty();
+        })
+      )
   }
 
   /**
@@ -219,10 +219,12 @@ export class RegisterComponent implements OnInit, OnDestroy, CanComponentDeactiv
    */
   protected attemptLogin(payload: { name:string, email:string, password:string, password_confirmation:string  }) {
     return this.auth.login(payload.email, payload.password)
-      .catch(error => {
-        this.exception.handle(error);
-        return Observable.empty();
-      });
+      .pipe(
+        catchError(error => {
+          this.exception.handle(error);
+          return Observable.empty();
+        })
+      )
   }
 
   /**

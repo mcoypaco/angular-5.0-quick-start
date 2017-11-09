@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import 'rxjs/add/observable/empty';
 
 import { ApiAccess } from '../../interfaces/api-access';
@@ -84,8 +84,10 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
 
       this.auth.resetPassword(this.token, this.payload())
         .finally(() => this.progress.inc(0.5))
-        .catch(error => this.catchResetPassword(error))
-        .switchMap(resp => this.loginAttempt())
+        .pipe(
+          catchError(error => this.catchResetPassword(error)),
+          switchMap(resp => this.loginAttempt())
+        )
         .finally(() => this.progress.done())
         .subscribe(
           (apiAccess: ApiAccess) => this.accessToken.store('apiAccess', apiAccess),
