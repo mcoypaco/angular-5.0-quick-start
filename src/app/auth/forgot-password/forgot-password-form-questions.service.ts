@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { QuestionBase } from '../../shared/question-base';
-import { TextboxQuestion } from '../../shared/textbox-question';
+import { TextboxQuestion } from '../../shared/textbox-question/textbox-question';
 
 @Injectable()
 export class ForgotPasswordFormQuestionsService {

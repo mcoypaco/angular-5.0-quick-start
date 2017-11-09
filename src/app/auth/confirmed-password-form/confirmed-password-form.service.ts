@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 
-import { PasswordQuestion } from '../../shared/password-question';
+import { PasswordQuestion } from '../../shared/password-question/password-question';
 import { SortingService } from '../../core/sorting.service';
 import { Subject } from 'rxjs/Subject';
 

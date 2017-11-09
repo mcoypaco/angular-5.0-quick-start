@@ -1,4 +1,4 @@
-import { QuestionBase } from './question-base';
+import { QuestionBase } from '../question-base';
 
 export class ArrayQuestion extends QuestionBase<string> {
     controlType = 'form-array';

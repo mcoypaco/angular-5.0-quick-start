@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 
-import { QuestionBase } from './question-base';
+import { QuestionBase } from '../question-base';
 
 let optionLabel = null;
 

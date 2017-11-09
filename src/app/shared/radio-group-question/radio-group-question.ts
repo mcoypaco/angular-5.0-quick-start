@@ -1,4 +1,4 @@
-import { QuestionBase } from './question-base';
+import { QuestionBase } from '../question-base';
 
 export class RadioGroupQuestion extends QuestionBase<string> {
     controlType = 'radio-group';
