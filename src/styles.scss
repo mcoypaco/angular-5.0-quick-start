@@ -17,3 +17,13 @@ body {
 .clickable {
     cursor: pointer;
 }
+
+html, material-app, mat-sidenav-container, .my-content {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.white-toolbar {
+    background: #fff;
+}

@@ -1,0 +1,23 @@
+<mat-toolbar class="white-toolbar">
+  <div fxLayout="row" fxLayoutAlign="space-between center" fxFlex>
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+      <!-- <button fxHide.gt-xs mat-icon-button (click)="toggleSidenav()">
+        <mat-icon class="material-icons">menu</mat-icon>
+      </button> -->
+      <a mat-button routerLink="/">
+          {{ app }}
+      </a>
+      <span>{{ state }}</span>
+    </div>
+    <div>
+      <button mat-button [matMenuTriggerFor]="menu">
+        <mat-icon class="material-icons">account_circle</mat-icon>
+        <!-- <span fxHide.xs>{{ user }}</span>  -->
+      </button>
+      <mat-menu #menu="matMenu">
+        <!-- <button mat-menu-item (click)="changePassword()">Change Password</button> -->
+        <button mat-menu-item (click)="logout()">Logout</button>
+      </mat-menu>
+    </div>
+  </div>
+</mat-toolbar>
