@@ -1,4 +1,5 @@
 export const environment = {
+  name: 'AngularQuickStart',
   production: true,
   laravel: {
     url: 'http://laravel-quickstart',
