@@ -3,11 +3,19 @@ import { CanActivate, CanLoad, ActivatedRouteSnapshot, RouterStateSnapshot, Rout
 import { Observable } from 'rxjs/Observable';
 
 import { AuthService } from './auth.service';
+import { ExceptionService } from '../core/exception.service';
+import { User } from '../models/user';
+
+import { routes } from '../routes';
 
 @Injectable()
 export class AuthGuard implements CanActivate, CanLoad {
 
-  constructor(private auth: AuthService, private router: Router) { }
+  constructor(
+    private auth: AuthService, 
+    private exception: ExceptionService,
+    private router: Router
+  ) { }
 
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -28,12 +36,26 @@ export class AuthGuard implements CanActivate, CanLoad {
    * @description redirect to intended route if valid
    * @throws redirect to login page if token is not valid
    */
-  checkAccess(url: string): boolean {
-    if(this.auth.isLoggedIn()) return true;
-    
-    this.auth.redirectUrl = url;
+  checkAccess(url: string): Promise<boolean> | boolean {
+    if(localStorage.getItem('user')) return true;
 
-    this.router.navigate(['/login']);
-    return false;
+    return this.auth.isLoggedIn()
+      .toPromise()
+      .then(user => {
+        if (user) {
+          localStorage.setItem('user', JSON.stringify(user));
+          return true;
+        }
+
+        this.auth.redirectUrl = url;
+        this.router.navigate([`${routes.login}`]);
+        
+        return false;
+      })
+      .catch(error => {
+        this.exception.handle(error);
+        return false;
+      });
   }
+
 }

@@ -7,17 +7,20 @@ import { ApiService } from '../core/api.service';
 import { AccessTokenService } from './access-token.service';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user';
+import { UserDataService } from '../core/resources/user-data.service';
 
 const { client_id, client_secret } = environment.laravel.passport;
 
 @Injectable()
 export class AuthService {
   redirectUrl: string = '/';
+  user: User;
 
   constructor(
     private api: ApiService,
     private accessToken: AccessTokenService, 
-    private http: HttpClient
+    private http: HttpClient,
+    private userData: UserDataService,
   ) { }
 
   /**
@@ -64,12 +67,12 @@ export class AuthService {
   /**
    * Checks if the user is logged in 
    */
-  isLoggedIn(): boolean {
+  isLoggedIn(): Observable<User> {
     const apiAccess = this.accessToken.get('apiAccess');
     
-    if(apiAccess) return true;
+    if(apiAccess) return this.userData.auth();
 
-    return false;
+    return Observable.empty();
   }
 
   /**

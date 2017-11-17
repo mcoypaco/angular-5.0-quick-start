@@ -12,6 +12,14 @@ export class UserDataService extends Resource {
   }
 
   /**
+   * Returns the information of the current authenticated user
+   * 
+   */
+  auth() {
+    return this.api.post(`${this.url}/auth`);
+  }
+
+  /**
    * Search for a specific user in the database.
    * 
    * @param payload 
