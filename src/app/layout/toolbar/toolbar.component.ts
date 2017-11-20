@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../auth/auth.service';
-import { AccessTokenService } from '../../auth/access-token.service'
+import { AccessTokenService } from '../../auth/access-token.service';
+import { ChangePasswordService } from '../../auth/change-password/change-password.service';
 import { ExceptionService } from '../../core/exception.service';
 import { ProgressService } from '../../core/progress.service';
 
 import { environment } from '../../../environments/environment';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-toolbar',
@@ -15,11 +17,13 @@ import { environment } from '../../../environments/environment';
 })
 export class ToolbarComponent implements OnInit {
   app: string;
+  user: User;
   state: string;
 
   constructor(
     private auth: AuthService, 
     private accessToken: AccessTokenService,
+    private cps: ChangePasswordService,
     private exception: ExceptionService,
     private progress: ProgressService,
     private router: Router
@@ -27,7 +31,19 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit() {
     this.app = environment.name;
-    this.state = 'Home';
+
+    this.user = this.auth.user();
+  }
+
+  toggleSidenav() {
+    
+  }
+
+  changePassword() {
+    this.cps.open().afterClosed().subscribe(
+      resp => console.log('ok'),
+      error => console.log('error')
+    );
   }
 
   logout() {
@@ -38,7 +54,7 @@ export class ToolbarComponent implements OnInit {
       this.auth.logout()
         .finally(() => this.progress.done())
         .subscribe(
-          resp => this.accessToken.delete('apiAccess'),
+          resp => localStorage.clear(),
           error => this.exception.handle(error),
           () => this.router.navigate(['/login'])
         );

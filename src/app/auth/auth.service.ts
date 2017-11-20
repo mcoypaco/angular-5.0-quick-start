@@ -14,7 +14,6 @@ const { client_id, client_secret } = environment.laravel.passport;
 @Injectable()
 export class AuthService {
   redirectUrl: string = '/';
-  user: User;
 
   constructor(
     private api: ApiService,
@@ -22,6 +21,10 @@ export class AuthService {
     private http: HttpClient,
     private userData: UserDataService,
   ) { }
+
+  user(): User {
+    return JSON.parse(localStorage.getItem('user'));
+  }
 
   /**
    * Asks for a token from the API server

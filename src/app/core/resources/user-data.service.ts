@@ -25,6 +25,24 @@ export class UserDataService extends Resource {
    * @param payload 
    */
   search(payload: { email:string }) {
-    return this.api.post(`${this.url}/search`);
+    return this.api.post(`${this.url}/search`, payload);
+  }
+
+  /**
+   * Chech if the password given matches the correct password.
+   * 
+   * @param payload 
+   */
+  checkPassword(payload: { password: string}) {
+    return this.api.post(`${this.url}/check-password`, payload);
+  }
+
+  /**
+   * Change user's password.
+   * 
+   * @param payload 
+   */
+  changePassword(payload) {
+    return this.api.post(`${this.url}/change-password`, payload);
   }
 }

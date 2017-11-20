@@ -1,15 +1,15 @@
 export class User {
     id: string;
     name: string;
-    username: string;
+    email: string;
 
     constructor(params: {
         id?: string,
         name: string,
-        username: string,
+        email: string,
     }) {
         this.id = params.id;
         this.name = params.name;
-        this.username = params.username;
+        this.email = params.email;
     }
 }
