@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material';
+
+import { SidenavService } from './sidenav.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -7,9 +10,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidenavComponent implements OnInit {
 
-  constructor() { }
+  constructor(private sidenavService: SidenavService) { }
 
   ngOnInit() {
+    this.sidenavService.sidenav = this.sidenav;
   }
 
+  @ViewChild('sidenav') sidenav: MatSidenav
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    if (event.target.innerWidth < 500) {
+        this.sidenav.close();
+    }
+    else{
+      this.sidenav.open();
+    }
+  }
 }

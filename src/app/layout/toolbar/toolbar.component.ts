@@ -6,8 +6,10 @@ import { AccessTokenService } from '../../auth/access-token.service';
 import { ChangePasswordService } from '../../auth/change-password/change-password.service';
 import { ExceptionService } from '../../core/exception.service';
 import { ProgressService } from '../../core/progress.service';
+import { PushNotificationService } from '../../core/push-notification.service';
 
 import { environment } from '../../../environments/environment';
+import { SidenavService } from '../sidenav/sidenav.service';
 import { User } from '../../models/user';
 
 @Component({
@@ -26,7 +28,9 @@ export class ToolbarComponent implements OnInit {
     private cps: ChangePasswordService,
     private exception: ExceptionService,
     private progress: ProgressService,
-    private router: Router
+    private pushNotification: PushNotificationService,
+    private router: Router,
+    private sidenav: SidenavService
   ) { }
 
   ngOnInit() {
@@ -36,14 +40,11 @@ export class ToolbarComponent implements OnInit {
   }
 
   toggleSidenav() {
-    
+    this.sidenav.toggle();
   }
 
   changePassword() {
-    this.cps.open().afterClosed().subscribe(
-      resp => console.log('ok'),
-      error => console.log('error')
-    );
+    this.cps.open().afterClosed().subscribe(resp => this.pushNotification.simple('Password changed.'));
   }
 
   logout() {

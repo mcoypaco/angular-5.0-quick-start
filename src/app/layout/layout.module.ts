@@ -7,6 +7,7 @@ import { LayoutComponent } from './layout.component';
 import { SharedModule } from '../shared/shared.module';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
+import { SidenavService } from './sidenav/sidenav.service';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     MatToolbarModule,
     SharedModule,
   ],
-  declarations: [LayoutComponent, SidenavComponent, ToolbarComponent]
+  declarations: [LayoutComponent, SidenavComponent, ToolbarComponent],
+  providers: [SidenavService]
 })
 export class LayoutModule { }

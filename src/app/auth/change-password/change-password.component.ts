@@ -9,7 +9,6 @@ import { ConfirmedPasswordFormService } from '../confirmed-password-form/confirm
 import { ChangePasswordFormService } from './change-password-form.service';
 import { ExceptionService } from '../../core/exception.service';
 import { ProgressService } from '../../core/progress.service';
-import { PushNotificationService } from '../../core/push-notification.service';
 import { QuestionBase } from '../../shared/question-base';
 import { QuestionControlService } from '../../shared/question-control.service';
 import { UserDataService } from '../../core/resources/user-data.service';
@@ -37,7 +36,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<ChangePasswordComponent>,
     private exception: ExceptionService,
     private progress: ProgressService,
-    private pushNotification: PushNotificationService,
     private questionControl: QuestionControlService,
     private questionSource: ChangePasswordFormService,
     private userData: UserDataService,
@@ -103,7 +101,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
         .subscribe(
           resp => this.dialogRef.close(),
           error => this.exception.handle(error),
-          () => this.pushNotification.simple('Password changed.')
         );
     }
   }
