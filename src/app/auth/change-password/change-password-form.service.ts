@@ -16,9 +16,10 @@ export class ChangePasswordFormService {
         label: 'Old Password',
         type: 'password',
         required: true,
-        validators: [Validators.required],
+        validators: [Validators.required, Validators.minLength(8)],
         validationMessages: {
           required: 'Old password is required.',
+          minlength: 'Old password must be at least 8 characters.'
         },
         customError: 'Invalid Password',
         order: 1

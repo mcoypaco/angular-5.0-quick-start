@@ -53,7 +53,11 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(400),
         distinctUntilChanged(),
-        switchMap(password => this.checkPassword(password)),
+        switchMap(password => {
+          if(this.form.get('old').valid) return this.checkPassword(password);
+
+          return Observable.empty();
+        }),
       )
       .subscribe((passwordValid: boolean) => {
         this.passwordValid = passwordValid;
@@ -76,18 +80,26 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     this.oldPasswordSubscription.unsubscribe();
   }
 
+  /**
+   * Send a change password request to the server.
+   * 
+   */
   changePassword() {
     if(this.form.valid && this.passwordValid && !this.busy) {
       const payload = {
         old: this.form.get('old').value,
         password: this.passwordForm.get('password').value,
-        password_confirmation: this.passwordForm.get('passwordConfirmation').value,
+        password_confirmation: this.passwordForm.get('password_confirmation').value,
       }
 
-      this.userData.changePassword({ payload })
-        .do(() => this.busy = true)
-        .do(() => this.progress.start())
-        .finally(() => this.progress.done())
+      this.busy = true;
+      this.progress.start();
+      
+      this.userData.changePassword(payload)
+        .finally(() => {
+            this.busy = false;
+            this.progress.done();
+          })
         .subscribe(
           resp => this.dialogRef.close(),
           error => this.exception.handle(error),
@@ -96,6 +108,11 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     }
   }
   
+  /**
+   * Verify user's current password.
+   * 
+   * @param password 
+   */
   checkPassword(password: string): Observable<boolean> {
     return this.userData.checkPassword({ password });
   }
